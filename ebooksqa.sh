@@ -37,16 +37,11 @@ fi
 rootDir="$1"
 
 # Output file
-# outFile="$2"
+outFile="$2.csv"
 
 # File to store stderr output for tika server and extraction process
 tikaServerErr=tika-server.stderr
 tikaExtractErr=tika-extract.stderr
-
-# Delete output file if it exists already
-#if [ -f $outFile ] ; then
-#  rm $outFile
-#fi
 
 # Delete tika server stderr file if it exists already
 if [ -f $tikaServerErr ] ; then
@@ -65,7 +60,7 @@ echo "Waiting for Tika server to initialise ..."
 sleep $sleepValue
 
 # Write header line to output file
-#echo "fileName","wordCount" >> $outFile
+echo "fileName","errors" > $outFile
 
 echo "Processing directory tree ..."
 
@@ -79,17 +74,20 @@ while IFS= read -d $'\0' -r file ; do
     extension="${fbasename##*.}"
 
     if [ $extension == "epub" ] ; then
-        # Run Epubcheck and extract all values of subMessage attribute
-        ecMessages=$(java -jar $epubcheckJar "$file" -out - | xmllint --xpath \
+        # Run Epubcheck and extract all values of subMessage attribute (report errors only, no warnings) 
+        ecMessages=$(java -jar $epubcheckJar "$file" -e -out - | xmllint --xpath \
         "//*[local-name()='jhove']/*[local-name()='repInfo']/*[local-name()='messages']/*[local-name()='message']/@subMessage" \
         - 2>>"epubcheck.err")
-        # Only keep unique subMessage values 
+        # Only keep unique subMessage values
         ecMessagesUnique=$(echo -e "${ecMessages// /\\n}" | sort -u )
         # Only keep actual subMessage codes
         ecMessagesUnique=${ecMessagesUnique//subMessage=/}
-        echo $ecMessagesUnique
+        # Trim leading / trailing spaces
+        #ecMessagesCleaned="$(echo -e "${ecMessagesUnique}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+        # Write line to output file        
+        echo "$file",$ecMessagesUnique >> $outFile
     fi
-  
+
     if [ $extension == "pdf" ] ; then
         echo
     fi
@@ -98,7 +96,7 @@ while IFS= read -d $'\0' -r file ; do
     # Write result to output file
     #echo $file,$wordCount >> $outFile
 done < <(find $rootDir -type f -print0)
- 
+
 # Record end time
 end=`date +%s`
 
