@@ -61,13 +61,12 @@ echo "Waiting for Tika server to initialise ..."
 sleep $sleepValue
 
 # Write header line to output file
-echo "fileName","errors" > $outFile
+echo "fileName","errors","wordCount" > $outFile
 
 echo "Processing directory tree ..."
 
 # Record start time
 start=`date +%s`
-
 
 while IFS= read -d $'\0' -r file ; do
 
@@ -79,9 +78,15 @@ while IFS= read -d $'\0' -r file ; do
         ecMessages=$(java -jar $epubcheckJar "$file" -e -out - | \
         xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message/@subMessage' \
         - 2>>"epubcheck.err")
+
         # Only keep unique subMessage values
         ecMessagesUnique=$(echo -e -n "${ecMessages// /\\n}" | sort -u)
-        echo "$file",$ecMessagesUnique >> $outFile
+
+        # Submit file to Tika server, extract text and count number of words
+        wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
+
+        # Write results to output file
+        echo "$file",$ecMessagesUnique,$wordCount >> $outFile
     fi
 
     if [ $extension == "pdf" ] ; then
