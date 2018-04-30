@@ -5,6 +5,7 @@
 # Dependencies:
 #
 # - java
+# - xmlstarlet
 # - tika-server (see link here: https://tika.apache.org/download.html)
 # - curl (installed by default on most Unix systems)
 # - wc (installed by default on most Unix systems)
@@ -75,16 +76,11 @@ while IFS= read -d $'\0' -r file ; do
 
     if [ $extension == "epub" ] ; then
         # Run Epubcheck and extract all values of subMessage attribute (report errors only, no warnings) 
-        ecMessages=$(java -jar $epubcheckJar "$file" -e -out - | xmllint --xpath \
-        "//*[local-name()='jhove']/*[local-name()='repInfo']/*[local-name()='messages']/*[local-name()='message']/@subMessage" \
+        ecMessages=$(java -jar $epubcheckJar "$file" -e -out - | \
+        xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message/@subMessage' \
         - 2>>"epubcheck.err")
         # Only keep unique subMessage values
-        ecMessagesUnique=$(echo -e "${ecMessages// /\\n}" | sort -u )
-        # Only keep actual subMessage codes
-        ecMessagesUnique=${ecMessagesUnique//subMessage=/}
-        # Trim leading / trailing spaces
-        #ecMessagesCleaned="$(echo -e "${ecMessagesUnique}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
-        # Write line to output file        
+        ecMessagesUnique=$(echo -e -n "${ecMessages// /\\n}" | sort -u)
         echo "$file",$ecMessagesUnique >> $outFile
     fi
 
