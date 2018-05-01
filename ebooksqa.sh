@@ -20,6 +20,9 @@ tikaServerJar=~/tika/tika-server-1.17.jar
 # Server URL
 tikaServerURL=http://localhost:9998/
 
+# Temporary Epubcheck output file
+ecTemp=epubcheck_temp.xml
+
 # Defines no. of seconds script waits to allow the Tika server to initialise   
 sleepValue=3
 
@@ -61,7 +64,7 @@ echo "Waiting for Tika server to initialise ..."
 sleep $sleepValue
 
 # Write header line to output file
-echo "fileName","errors","wordCount" > $outFile
+echo "fileName","epubVersion","epubStatus","errors","wordCount" > $outFile
 
 echo "Processing directory tree ..."
 
@@ -74,10 +77,15 @@ while IFS= read -d $'\0' -r file ; do
     extension="${fbasename##*.}"
 
     if [ $extension == "epub" ] ; then
-        # Run Epubcheck and extract all values of subMessage attribute (report errors only, no warnings) 
-        ecMessages=$(java -jar $epubcheckJar "$file" -e -out - | \
-        xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message/@subMessage' \
-        - 2>>"epubcheck.err")
+        # Run Epubcheck
+        java -jar $epubcheckJar "$file" -e -out $ecTemp 2>>"epubcheck.err"
+
+        # Extract EPub version and validation oucvome        
+        epubVersion=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:version' $ecTemp)
+        epubStatus=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:status' $ecTemp)
+
+        # Extract all values of subMessage attribute (report errors only, no warnings)
+        ecMessages=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message/@subMessage' $ecTemp)
 
         # Only keep unique subMessage values
         ecMessagesUnique=$(echo -e -n "${ecMessages// /\\n}" | sort -u)
@@ -86,7 +94,7 @@ while IFS= read -d $'\0' -r file ; do
         wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
 
         # Write results to output file
-        echo "$file",$ecMessagesUnique,$wordCount >> $outFile
+        echo "$file",$epubVersion,$epubStatus,$ecMessagesUnique,$wordCount >> $outFile
     fi
 
     if [ $extension == "pdf" ] ; then
@@ -97,6 +105,9 @@ while IFS= read -d $'\0' -r file ; do
     # Write result to output file
     #echo $file,$wordCount >> $outFile
 done < <(find $rootDir -type f -print0)
+
+# Clean up
+rm $ecTemp
 
 # Record end time
 end=`date +%s`
