@@ -64,7 +64,7 @@ echo "Waiting for Tika server to initialise ..."
 sleep $sleepValue
 
 # Write header line to output file
-echo "fileName","epubVersion","epubStatus","errors","wordCount" > $outFile
+echo "fileName","epubVersion","epubStatus","errors","warnings","wordCount" > $outFile
 
 echo "Processing directory tree ..."
 
@@ -84,17 +84,21 @@ while IFS= read -d $'\0' -r file ; do
         epubVersion=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:version' $ecTemp)
         epubStatus=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:status' $ecTemp)
 
-        # Extract all values of subMessage attribute (report errors only, no warnings)
-        ecMessages=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message/@subMessage' $ecTemp)
+        # Extract all error codes
+        errors=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message[contains(.,"ERROR")]/@subMessage' $ecTemp)
 
-        # Only keep unique subMessage values
-        ecMessagesUnique=$(echo -e -n "${ecMessages// /\\n}" | sort -u)
+        # Extract all warning codes
+        warnings=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message[contains(.,"WARN")]/@subMessage' $ecTemp)
+
+        # Only keep unique errors/warnings
+        errorsUnique=$(echo -e -n "${errors// /\\n}" | sort -u)
+        warningsUnique=$(echo -e -n "${warnings// /\\n}" | sort -u)
 
         # Submit file to Tika server, extract text and count number of words
         wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
 
         # Write results to output file
-        echo "$file",$epubVersion,$epubStatus,$ecMessagesUnique,$wordCount >> $outFile
+        echo "$file",$epubVersion,$epubStatus,$errorsUnique,$warningsUnique,$wordCount >> $outFile
     fi
 
     if [ $extension == "pdf" ] ; then
