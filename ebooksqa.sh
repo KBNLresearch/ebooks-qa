@@ -43,18 +43,22 @@ rootDir="$1"
 # Output file
 outFile="$2.csv"
 
-# File to store stderr output for tika server and extraction process
+# Files to store stderr output for tika server, extraction process and EpubCheck
 tikaServerErr=tika-server.stderr
 tikaExtractErr=tika-extract.stderr
+eCErr=epubcheck.err
 
-# Delete tika server stderr file if it exists already
+# Delete stderr files if they exist already
 if [ -f $tikaServerErr ] ; then
   rm $tikaServerErr
 fi
 
-# Delete tika extract stderr file if it exists already
 if [ -f $tikaExtractErr ] ; then
   rm $tikaExtractErr
+fi
+
+if [ -f $eCErr ] ; then
+  rm $eCErr
 fi
 
 # Launch the Tika server as a subprocess
@@ -64,7 +68,7 @@ echo "Waiting for Tika server to initialise ..."
 sleep $sleepValue
 
 # Write header line to output file
-echo "fileName","epubVersion","epubStatus","errors","warnings","wordCount" > $outFile
+echo "fileName","epubVersion","epubStatus","noErrors","noWarnings","errors","warnings","wordCount" > $outFile
 
 echo "Processing directory tree ..."
 
@@ -78,7 +82,7 @@ while IFS= read -d $'\0' -r file ; do
 
     if [ $extension == "epub" ] ; then
         # Run Epubcheck
-        java -jar $epubcheckJar "$file" -out $ecTemp 2>>"epubcheck.err"
+        java -jar $epubcheckJar "$file" -out $ecTemp 2>> $eCErr
 
         # Extract EPub version and validation oucvome        
         epubVersion=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:version' $ecTemp)
@@ -94,20 +98,24 @@ while IFS= read -d $'\0' -r file ; do
         errorsUnique=$(echo -e -n "${errors// /\\n}" | sort -u)
         warningsUnique=$(echo -e -n "${warnings// /\\n}" | sort -u)
 
+        # Count number of errors and warnings
+        errorsArray=( $errorsUnique )
+        noErrors=${#errorsArray[@]}
+
+        warningsArray=( $warningsUnique )
+        noWarnings=${#warningsArray[@]}
+
         # Submit file to Tika server, extract text and count number of words
         wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
 
         # Write results to output file
-        echo "$file",$epubVersion,$epubStatus,$errorsUnique,$warningsUnique,$wordCount >> $outFile
+        echo "$file",$epubVersion,$epubStatus,$noErrors,$noWarnings,$errorsUnique,$warningsUnique,$wordCount >> $outFile
     fi
 
-    if [ $extension == "pdf" ] ; then
-        echo
-    fi
-    # Submit file to Tika server, extract text and count number of words
-    #wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
-    # Write result to output file
-    #echo $file,$wordCount >> $outFile
+    #if [ $extension == "pdf" ] ; then
+    #    echo
+    #fi
+
 done < <(find $rootDir -type f -print0)
 
 # Clean up

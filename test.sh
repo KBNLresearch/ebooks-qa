@@ -25,13 +25,23 @@ errors=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message[contains(
 # Extract all warning codes
 warnings=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:messages/_:message[contains(.,"WARN")]/@subMessage'  $ecTemp)
 
-
 # Only keep unique errors and warnings
 errorsUnique=$(echo -e -n "${errors// /\\n}" | sort -u)
 warningsUnique=$(echo -e -n "${warnings// /\\n}" | sort -u)
 
+# Count number of errors and warnings
+errorsArray=( $errorsUnique )
+noErrors=${#errorsArray[@]}
+
+warningsArray=( $warningsUnique )
+noWarnings=${#warningsArray[@]}
+
 echo $errors >> $outFile
+echo $errorsUnique >> $outFile
+echo $noErrors >> $outFile
 echo $warnings >> $outFile
+echo $warningsUnique >> $outFile
+echo $noWarnings >> $outFile
 echo $epubVersion >> $outFile
 echo $epubStatus >> $outFile
 echo $epubCreated >> $outFile
