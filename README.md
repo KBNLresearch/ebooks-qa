@@ -31,6 +31,10 @@ Comma-delimited text file (`$prefixOut.csv`) with for each EPUB the following co
 Errors and warnings are reported as codes; the meaning of these codes can be found in EpubCheck's [default MessageBundle.properties file
 ](https://github.com/IDPF/epubcheck/blob/master/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties).
 
+Note that the script only reports on *unique* errors and warnings. For example, if an EPUB contains multiple missing referenced resources (error code `RSC-007`), the script removes any duplicate instances.
+
+The reported word counts are a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
+
 
 ## Example output
 
