@@ -11,11 +11,17 @@ This repo contains scripts and resources for automated quality assessement of e-
 - curl (installed by default on most Unix systems)
 - wc (installed by default on most Unix systems)
 
-## Usage
+## ebooksqa.sh
+
+This script recursively walks through a directory tree, and runs Epubcheck for each EPUB file (identified by its file extension). It then extracts all validation error and warning codes, removing duplicate codes, and writes them to a comma-delimited text file. Note that the script only reports on *unique* errors and warnings. For example, if an EPUB contains multiple missing referenced resources (error code `RSC-007`), any duplicate instances are removed.
+
+The script also reports a word count for each file. This is a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
+
+### Usage
 
     ebooksqa.sh rootDirectory prefixOut
 
-## Output
+### Output
 
 Comma-delimited text file (`$prefixOut.csv`) with for each EPUB the following columns:
 
@@ -31,12 +37,8 @@ Comma-delimited text file (`$prefixOut.csv`) with for each EPUB the following co
 Errors and warnings are reported as codes; the meaning of these codes can be found in EpubCheck's [default MessageBundle.properties file
 ](https://github.com/IDPF/epubcheck/blob/master/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties).
 
-Note that the script only reports on *unique* errors and warnings. For example, if an EPUB contains multiple missing referenced resources (error code `RSC-007`), the script removes any duplicate instances.
 
-The reported word counts are a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
-
-
-## Example output
+### Example output
 
     fileName,epubVersion,epubStatus,noErrors,noWarnings,errors,warnings,wordCount
     ./ebooks-test/test/epub20_crazy_columns.epub,2.0.1,Well-formed,0,1,,CSS-017,45
