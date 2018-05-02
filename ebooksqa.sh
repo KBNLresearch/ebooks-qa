@@ -78,7 +78,7 @@ while IFS= read -d $'\0' -r file ; do
 
     if [ $extension == "epub" ] ; then
         # Run Epubcheck
-        java -jar $epubcheckJar "$file" -e -out $ecTemp 2>>"epubcheck.err"
+        java -jar $epubcheckJar "$file" -out $ecTemp 2>>"epubcheck.err"
 
         # Extract EPub version and validation oucvome        
         epubVersion=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:version' $ecTemp)
