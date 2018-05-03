@@ -59,16 +59,29 @@ def main():
     aWarnings = np.array(warningsAll)
 
     # Create data frame
-    df = pd.DataFrame(myArray,
-                      index=np.array(fileName),
-                      columns=['epubVersion', 'epubStatus','noErrors', 'noWarnings', 'wordCount'])
+    df = pd.DataFrame({'fileName' : np.array(fileName),
+                        'epubVersion' : np.array(epubVersion),
+                        'epubStatus' : np.array(epubStatus),
+                        'noErrors' : np.array(noErrors),
+                        'noWarnings' : np.array(noWarnings),
+                        'wordCount' : np.array(wordCount) })
 
-    print(df.mean(0))
+    # Set data type for each column
+    df = df.astype({'fileName': 'U',
+                      'epubVersion' : 'U',
+                      'epubStatus' : 'U',
+                      'noErrors' : 'u2', 
+                      'noWarnings' : 'u2',
+                      'wordCount' : 'u4'})
 
+    print(df.head())    
+    print(df.dtypes)
+
+    """
     print("\nError counts:")
     print(pd.Series(aErrors).value_counts())
     print("\nWarning counts:")
     print(pd.Series(aWarnings).value_counts())
-
+    """
 main()
 
