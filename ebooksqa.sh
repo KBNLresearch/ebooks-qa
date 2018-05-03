@@ -46,7 +46,7 @@ outFile="$2.csv"
 # Files to store stderr output for tika server, extraction process and EpubCheck
 tikaServerErr=tika-server.stderr
 tikaExtractErr=tika-extract.stderr
-eCErr=epubcheck.err
+eCErr=epubcheck.stderr
 
 # Delete stderr files if they exist already
 if [ -f $tikaServerErr ] ; then
