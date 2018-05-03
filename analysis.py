@@ -59,7 +59,7 @@ def main():
     aWarnings = np.array(warningsAll)
 
     # Create data frame
-    df = pd.DataFrame({'fileName' : np.array(fileName),
+    epubsAll = pd.DataFrame({'fileName' : np.array(fileName),
                         'epubVersion' : np.array(epubVersion),
                         'epubStatus' : np.array(epubStatus),
                         'noErrors' : np.array(noErrors),
@@ -67,21 +67,45 @@ def main():
                         'wordCount' : np.array(wordCount) })
 
     # Set data type for each column
-    df = df.astype({'fileName': 'U',
+    epubsAll = epubsAll.astype({'fileName': 'U',
                       'epubVersion' : 'U',
                       'epubStatus' : 'U',
                       'noErrors' : 'u2', 
                       'noWarnings' : 'u2',
                       'wordCount' : 'u4'})
 
-    print(df.head())    
-    print(df.dtypes)
+    print("\nEPUBS, all:\n--------")
+    print(epubsAll.describe())
 
-    """
-    print("\nError counts:")
+    # EPUBs with errors
+    epubsWithErrors = epubsAll[epubsAll.noErrors > 0]
+
+    print("\nEPUBS with EPUBCheck errors:\n--------")
+    print(epubsWithErrors.describe())
+
+    # EPUBs with warnings
+    epubsWithWarnings = epubsAll[epubsAll.noWarnings > 0]
+
+    print("\nEPUBS with EPUBCheck warnings:\n--------")
+    print(epubsWithWarnings.describe())
+
+    # EPUBs with errors or warnings
+    epubsWithErrorsOrWarnings = epubsAll[(epubsAll.noErrors > 0) | (epubsAll.noWarnings > 0)]
+
+    print("\nEPUBS with EPUBCheck errors or warnings:\n--------")
+    print(epubsWithErrorsOrWarnings.describe())
+
+    # EPUBs with word count < 1000
+    epubsWithWClt1000 = epubsAll[epubsAll.wordCount < 1000]
+
+    print("\nEPUBS with word count < 1000:\n--------")
+    print(epubsWithWClt1000.describe())
+
+
+    print("\nError counts:\n--------")
     print(pd.Series(aErrors).value_counts())
-    print("\nWarning counts:")
+    print("\nWarning counts:\n--------")
     print(pd.Series(aWarnings).value_counts())
-    """
+
 main()
 
