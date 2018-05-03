@@ -5,6 +5,17 @@ import csv
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.pylab as pylab
+from tabulate import tabulate
+
+# Set defaults for pyplot
+params = {'legend.fontsize': 'x-large',
+          'figure.figsize': (12, 9),
+         'axes.labelsize': '18',
+         'axes.titlesize':'x-large',
+         'xtick.labelsize':'x-large',
+         'ytick.labelsize':'x-large'}
+pylab.rcParams.update(params)
 
 def main():
     if len(sys.argv) < 2:
@@ -14,6 +25,7 @@ def main():
         fileEcResults=sys.argv[1]
 
     # Read CSV data
+    # TODO: might be simpler to use IO tools: https://pandas.pydata.org/pandas-docs/stable/io.html
     fEcResults = open(fileEcResults, "r", encoding="utf-8")
     fEcResultsCSV = csv.reader(fEcResults)
     headerEcResults = next(fEcResultsCSV)
@@ -74,38 +86,50 @@ def main():
                       'noWarnings' : 'u2',
                       'wordCount' : 'u4'})
 
-    print("\nEPUBS, all:\n--------")
-    print(epubsAll.describe())
+    epubsAll.describe().to_csv('epub-all.csv')
 
     # EPUBs with errors
     epubsWithErrors = epubsAll[epubsAll.noErrors > 0]
-
-    print("\nEPUBS with EPUBCheck errors:\n--------")
-    print(epubsWithErrors.describe())
+    epubsWithErrors.describe().to_csv('epub-errors.csv')
 
     # EPUBs with warnings
     epubsWithWarnings = epubsAll[epubsAll.noWarnings > 0]
-
-    print("\nEPUBS with EPUBCheck warnings:\n--------")
-    print(epubsWithWarnings.describe())
+    epubsWithWarnings.describe().to_csv('epub-warnings.csv')
 
     # EPUBs with errors or warnings
     epubsWithErrorsOrWarnings = epubsAll[(epubsAll.noErrors > 0) | (epubsAll.noWarnings > 0)]
-
-    print("\nEPUBS with EPUBCheck errors or warnings:\n--------")
-    print(epubsWithErrorsOrWarnings.describe())
+    epubsWithErrorsOrWarnings.describe().to_csv('epub-errors-or-warnings.csv')
 
     # EPUBs with word count < 1000
     epubsWithWClt1000 = epubsAll[epubsAll.wordCount < 1000]
+    epubsWithWClt1000.describe().to_csv('epub-wc-gt-1000.csv')
 
-    print("\nEPUBS with word count < 1000:\n--------")
-    print(epubsWithWClt1000.describe())
+    # Frequency of errors
+    errorCounts = pd.Series(aErrors).value_counts()
+    errorCounts.to_csv('error-counts.csv')
+    ecPlot = errorCounts.sort_values().plot(kind='barh',
+                              lw=2.5,
+                              figsize=(12,9))
 
+    ecPlot.set_xlabel('Count')
+    ecPlot.set_ylabel('Error Code') 
 
-    print("\nError counts:\n--------")
-    print(pd.Series(aErrors).value_counts())
-    print("\nWarning counts:\n--------")
-    print(pd.Series(aWarnings).value_counts())
+    fig = ecPlot.get_figure()
+    fig.savefig('errors.png')    
+
+    # Frequency of warnings
+    warningCounts = pd.Series(aWarnings).value_counts()
+    warningCounts.to_csv('warning-counts.csv')
+    wcPlot = warningCounts.sort_values().plot(kind='barh',
+                              lw=2.5,
+                              figsize=(12,9))
+
+    wcPlot.set_xlabel('Count')
+    wcPlot.set_ylabel('Warning Code') 
+   
+    fig = wcPlot.get_figure()
+    fig.savefig('warnings.png')
+ 
 
 main()
 
