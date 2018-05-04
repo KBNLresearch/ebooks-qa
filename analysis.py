@@ -55,7 +55,8 @@ def main():
         line.strip()
         if not line.startswith('#') and line != '':
             lineSplit = line.split('=')
-            code = lineSplit[0]
+            # Replace underscores with '-' (which are output by Epubcheck)
+            code = lineSplit[0].replace('_', '-')
             desc = lineSplit[1]
             messageLookup[code] = desc
 
@@ -160,8 +161,16 @@ def main():
 
     # Frequency of errors
     errorCounts = errors.value_counts().to_frame(name="count")
+
+    # Insert column with error descriptions
+    errorDescriptions = []
+    for i, row in errorCounts.iterrows():
+        description = messageLookup.get(i, "n/a")
+        errorDescriptions.append(description)
+    errorCounts.insert(0, 'description', errorDescriptions)
+
     fOut.write('\n\n## Frequency of validation errors\n\n')
-    fOut.write(dfToMarkdown(errorCounts,['Error', 'Frequency']))
+    fOut.write(dfToMarkdown(errorCounts,['Code', 'Description', 'Frequency']))
 
     ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
                               lw=2.5,
@@ -177,8 +186,16 @@ def main():
 
     # Frequency of warnings
     warningCounts = warnings.value_counts().to_frame(name="count")
+
+    # Insert column with warning descriptions
+    warningDescriptions = []
+    for i, row in warningCounts.iterrows():
+        description = messageLookup.get(i, "n/a")
+        warningDescriptions.append(description)
+    warningCounts.insert(0, 'description', warningDescriptions)
+
     fOut.write('\n\n## Frequency of validation warnings\n\n')
-    fOut.write(dfToMarkdown(warningCounts,['Warning', 'Frequency']))
+    fOut.write(dfToMarkdown(warningCounts,['Code', 'Description', 'Frequency']))
 
     wcPlot = warningCounts.sort_values(by="count").plot(kind='barh',
                               lw=2.5,
