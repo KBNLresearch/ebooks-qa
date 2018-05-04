@@ -41,6 +41,7 @@ def main():
     # Open output report for writing
     try:
         fOut = codecs.open(os.path.join(dirOut, 'report.md'), "w", "utf-8")
+        fOut.write('# EPUB analysis report\n')
     except:
         sys.stderr.write("Cannot write output report\n")
         sys.exit()
@@ -108,7 +109,7 @@ def main():
     errors = pd.Series(np.array(errorsAll))
     warnings = pd.Series(np.array(warningsAll))
 
-    fOut.write('\n\n## Dataset description\n\n')
+    fOut.write('\n\n## All EPUBs\n\n')
     fOut.write(dfToMarkdown(epubsAll.describe()))
 
     # EPUBs with errors
@@ -132,7 +133,7 @@ def main():
     fOut.write(dfToMarkdown(epubsWithWClt1000.describe()))
 
     # Frequency of EPUB versions
-    ebupVCounts = pd.Series(epubVersion).value_counts().to_frame(name="count")
+    ebupVCounts = pd.Series(epubVersion).value_counts().to_frame()
     fOut.write('\n\n## EPUB versions\n\n')
     fOut.write(dfToMarkdown(ebupVCounts,['Version', 'Frequency']))
 
@@ -151,6 +152,8 @@ def main():
     fig = ecPlot.get_figure()
     fig.savefig(os.path.join(dirOut, 'errors.png'))
 
+    fOut.write('\n\n![](errors.png)\n')
+
     # Frequency of warnings
     warningCounts = warnings.value_counts().to_frame(name="count")
     fOut.write('\n\n## Frequency of validation warnings\n\n')
@@ -165,6 +168,8 @@ def main():
    
     fig = wcPlot.get_figure()
     fig.savefig(os.path.join(dirOut, 'warnings.png'))
+
+    fOut.write('\n\n![](warnings.png)\n')
 
     # Close report
     fOut.close()
