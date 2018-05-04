@@ -3,6 +3,7 @@
 import sys
 import os
 import csv
+import urllib.request
 import codecs
 import pandas as pd
 import numpy as np
@@ -37,6 +38,26 @@ def main():
 
     if not os.path.isdir(dirOut):
         os.makedirs(dirOut)
+
+    # Download Epubcheck MessageBundle.properties file
+    try:        
+        response = urllib.request.urlopen('https://raw.githubusercontent.com/IDPF/epubcheck/master/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties')
+        mbProperties = response.read().decode("utf-8", errors="ignore").split('\n')
+
+    except:
+        sys.stderr.write("Cannot read Epubcheck MessageBundle.properties file\n")
+        sys.exit()
+
+    # Dictionary that links error/warning codes to descriptions
+    messageLookup={}
+
+    for line in mbProperties:
+        line.strip()
+        if not line.startswith('#') and line != '':
+            lineSplit = line.split('=')
+            code = lineSplit[0]
+            desc = lineSplit[1]
+            messageLookup[code] = desc
 
     # Open output report for writing
     try:
