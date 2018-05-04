@@ -1,7 +1,9 @@
 #! /usr/bin/env python
 
 import sys
+import os
 import csv
+import codecs
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,12 +19,31 @@ params = {'legend.fontsize': 'x-large',
          'ytick.labelsize':'x-large'}
 pylab.rcParams.update(params)
 
+def dfToMarkdown(dataframe, headers='keys'):
+    mdOut = dataframe.pipe(tabulate, headers=headers, tablefmt='pipe')
+    return mdOut
+
 def main():
-    if len(sys.argv) < 2:
-        sys.stderr.write("USAGE: analysis.py <inputFile>\n")
+    if len(sys.argv) < 3:
+        sys.stderr.write("USAGE: analysis.py <inputFile> <dirOut>\n")
         sys.exit()
     else:
         fileEcResults=sys.argv[1]
+        dirOut=os.path.normpath(sys.argv[2])
+
+    if not os.path.isfile(fileEcResults):
+        sys.stderr.write("Input file does not exist\n")
+        sys.exit()
+
+    if not os.path.isdir(dirOut):
+        os.makedirs(dirOut)
+
+    # Open output report for writing
+    try:
+        fOut = codecs.open(os.path.join(dirOut, 'report.md'), "w", "utf-8")
+    except:
+        sys.stderr.write("Cannot write output report\n")
+        sys.exit()
 
     # Read CSV data
     # TODO: might be simpler to use IO tools: https://pandas.pydata.org/pandas-docs/stable/io.html
@@ -65,11 +86,6 @@ def main():
     # Put all attributes that are linked to one file in an array (transpose to make each list a column)
     myArray = np.transpose([epubVersion, epubStatus, noErrors, noWarnings, wordCount])
 
-    # Errors and Warnings lists have different size and are not linked to a file,
-    # so we create separate arrays for them
-    aErrors = np.array(errorsAll)
-    aWarnings = np.array(warningsAll)
-
     # Create data frame
     epubsAll = pd.DataFrame({'fileName' : np.array(fileName),
                         'epubVersion' : np.array(epubVersion),
@@ -86,50 +102,72 @@ def main():
                       'noWarnings' : 'u2',
                       'wordCount' : 'u4'})
 
-    epubsAll.describe().to_csv('epub-all.csv')
+    
+    # Errors and Warnings lists have different size and are not linked to a file,
+    # so we create separate series for them
+    errors = pd.Series(np.array(errorsAll))
+    warnings = pd.Series(np.array(warningsAll))
+
+    fOut.write('\n\n## Dataset description\n\n')
+    fOut.write(dfToMarkdown(epubsAll.describe()))
 
     # EPUBs with errors
     epubsWithErrors = epubsAll[epubsAll.noErrors > 0]
-    epubsWithErrors.describe().to_csv('epub-errors.csv')
+    fOut.write('\n\n## EPUBs with errors\n\n')
+    fOut.write(dfToMarkdown(epubsWithErrors.describe()))
 
     # EPUBs with warnings
     epubsWithWarnings = epubsAll[epubsAll.noWarnings > 0]
-    epubsWithWarnings.describe().to_csv('epub-warnings.csv')
+    fOut.write('\n\n## EPUBs with warnings\n\n')
+    fOut.write(dfToMarkdown(epubsWithWarnings.describe()))
 
     # EPUBs with errors or warnings
     epubsWithErrorsOrWarnings = epubsAll[(epubsAll.noErrors > 0) | (epubsAll.noWarnings > 0)]
-    epubsWithErrorsOrWarnings.describe().to_csv('epub-errors-or-warnings.csv')
+    fOut.write('\n\n## EPUBs with errors or warnings\n\n')
+    fOut.write(dfToMarkdown(epubsWithErrorsOrWarnings.describe()))
 
     # EPUBs with word count < 1000
     epubsWithWClt1000 = epubsAll[epubsAll.wordCount < 1000]
-    epubsWithWClt1000.describe().to_csv('epub-wc-gt-1000.csv')
+    fOut.write('\n\n## EPUBs with less than 1000 words\n\n')
+    fOut.write(dfToMarkdown(epubsWithWClt1000.describe()))
+
+    # Frequency of EPUB versions
+    ebupVCounts = pd.Series(epubVersion).value_counts().to_frame(name="count")
+    fOut.write('\n\n## EPUB versions\n\n')
+    fOut.write(dfToMarkdown(ebupVCounts,['Version', 'Frequency']))
 
     # Frequency of errors
-    errorCounts = pd.Series(aErrors).value_counts()
-    errorCounts.to_csv('error-counts.csv')
-    ecPlot = errorCounts.sort_values().plot(kind='barh',
+    errorCounts = errors.value_counts().to_frame(name="count")
+    fOut.write('\n\n## Frequency of validation errors\n\n')
+    fOut.write(dfToMarkdown(errorCounts,['Error', 'Frequency']))
+
+    ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
                               lw=2.5,
                               figsize=(12,9))
 
-    ecPlot.set_xlabel('Count')
-    ecPlot.set_ylabel('Error Code') 
+    ecPlot.set_xlabel('Frequency')
+    ecPlot.set_ylabel('Error') 
 
     fig = ecPlot.get_figure()
-    fig.savefig('errors.png')    
+    fig.savefig(os.path.join(dirOut, 'errors.png'))
 
     # Frequency of warnings
-    warningCounts = pd.Series(aWarnings).value_counts()
-    warningCounts.to_csv('warning-counts.csv')
-    wcPlot = warningCounts.sort_values().plot(kind='barh',
+    warningCounts = warnings.value_counts().to_frame(name="count")
+    fOut.write('\n\n## Frequency of validation warnings\n\n')
+    fOut.write(dfToMarkdown(warningCounts,['Warning', 'Frequency']))
+
+    wcPlot = warningCounts.sort_values(by="count").plot(kind='barh',
                               lw=2.5,
                               figsize=(12,9))
 
-    wcPlot.set_xlabel('Count')
-    wcPlot.set_ylabel('Warning Code') 
+    wcPlot.set_xlabel('Frequency')
+    wcPlot.set_ylabel('Warning') 
    
     fig = wcPlot.get_figure()
-    fig.savefig('warnings.png')
- 
+    fig.savefig(os.path.join(dirOut, 'warnings.png'))
+
+    # Close report
+    fOut.close()
 
 main()
 
