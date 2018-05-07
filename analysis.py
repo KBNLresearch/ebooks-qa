@@ -114,18 +114,26 @@ def main():
     # EPUBs with errors
     epubsWithErrors = epubsAll[epubsAll.noErrors > 0]
     noEpubsWithErrors = len(epubsWithErrors)
+    # Write to CSV
+    epubsWithErrors.to_csv(os.path.join(dirOut, 'errors.csv'), encoding='utf-8')
 
     # EPUBs with warnings
     epubsWithWarnings = epubsAll[epubsAll.noWarnings > 0]
     noEpubsWithWarnings = len(epubsWithWarnings)
+    # Write to CSV
+    epubsWithWarnings.to_csv(os.path.join(dirOut, 'warnings.csv'), encoding='utf-8')
 
     # EPUBs with errors or warnings
     epubsWithErrorsOrWarnings = epubsAll[(epubsAll.noErrors > 0) | (epubsAll.noWarnings > 0)]
     noEpubsWithErrorsOrWarnings = len(epubsWithErrorsOrWarnings)
+    # Write to CSV
+    epubsWithErrorsOrWarnings.to_csv(os.path.join(dirOut, 'errorsorwarnings.csv'), encoding='utf-8')
 
     # EPUBs with word count < 1000
     epubsWithWClt1000 = epubsAll[epubsAll.wordCount < 1000]
     noEpubsWithWClt1000 = len(epubsWithWClt1000)
+    # Write to CSV
+    epubsWithWClt1000.to_csv(os.path.join(dirOut, 'wordcountlt1000.csv'), encoding='utf-8')
 
     # Create summary table
     summaryTable = [
@@ -139,6 +147,18 @@ def main():
 
     fOut.write('\n\n## Summary\n\n')
     fOut.write(tabulate(summaryTable, headers, tablefmt='pipe'))
+
+    # Create table with links to generated CSV files
+    csvTable = [
+                ['EPUBs with errors', '[errors.csv](errors.csv)'],
+                ['EPUBs with warnings', '[warnings.csv](warnings.csv)'],
+                ['EPUBs with errors or warnings', '[errorsorwarnings.csv](errorsorwarnings.csv)'],
+                ['EPUBs with less than 1000 words', '[wordcountlt1000.csv](wordcountlt1000.csv)']]
+
+    headers = ['', 'File']
+
+    fOut.write('\n\n## CSV subsets\n\n')
+    fOut.write(tabulate(csvTable, headers, tablefmt='pipe'))
 
     # Frequency of EPUB versions
     epubVCounts = epubsAll['epubVersion'].value_counts().to_frame()
