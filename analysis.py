@@ -173,8 +173,9 @@ def main():
     fOut.write(dfToMarkdown(errorCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
 
     ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
-                              lw=2.5,
-                              figsize=(8,8))
+                                                      y='count',
+                                                      lw=2.5,
+                                                      figsize=(8,8))
 
     ecPlot.set_xlabel('Count')
     ecPlot.set_ylabel('Error') 
@@ -205,8 +206,9 @@ def main():
     fOut.write(dfToMarkdown(warningCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
 
     wcPlot = warningCounts.sort_values(by="count").plot(kind='barh',
-                              lw=2.5,
-                              figsize=(8,8))
+                                                        y='count',
+                                                        lw=2.5,
+                                                        figsize=(8,8))
 
     wcPlot.set_xlabel('Count')
     wcPlot.set_ylabel('Warning') 
