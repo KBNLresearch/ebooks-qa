@@ -153,7 +153,7 @@ def main():
                               lw=2.5,
                               figsize=(8,8))
 
-    ecPlot.set_xlabel('Frequency')
+    ecPlot.set_xlabel('Count')
     ecPlot.set_ylabel('Error') 
 
     fig = ecPlot.get_figure()
@@ -178,7 +178,7 @@ def main():
                               lw=2.5,
                               figsize=(8,8))
 
-    wcPlot.set_xlabel('Frequency')
+    wcPlot.set_xlabel('Count')
     wcPlot.set_ylabel('Warning') 
    
     fig = wcPlot.get_figure()
