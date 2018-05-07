@@ -68,7 +68,7 @@ echo "Waiting for Tika server to initialise ..."
 sleep $sleepValue
 
 # Write header line to output file
-echo "fileName","epubVersion","epubStatus","noErrors","noWarnings","errors","warnings","wordCount" > $outFile
+echo "fileName","identifier","title","author","publisher","epubVersion","epubStatus","noErrors","noWarnings","errors","warnings","wordCount" > $outFile
 
 echo "Processing directory tree ..."
 
@@ -105,11 +105,18 @@ while IFS= read -d $'\0' -r file ; do
         warningsArray=( $warningsUnique )
         noWarnings=${#warningsArray[@]}
 
+        # Extract identifier (isbn), title, author and publisher name
+
+        identifier=$(xmlstarlet sel -t -v "/_:jhove/_:repInfo/_:properties/_:property[_:name='Info']/_:values/_:property[_:name='Identifier']/_:values/_:value" $ecTemp)
+        title=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:properties/_:property/_:name[contains(.,"Title")]/_:values/_:value' $ecTemp)
+        author=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:properties/_:property/_:name[contains(.,"Creator")]/_:values/_:value' $ecTemp)
+        publisher=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:properties/_:property/_:name[contains(.,"Publisher")]/_:values/_:value' $ecTemp)
+
         # Submit file to Tika server, extract text and count number of words
         wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
 
         # Write results to output file
-        echo "$file",$epubVersion,$epubStatus,$noErrors,$noWarnings,$errorsUnique,$warningsUnique,$wordCount >> $outFile
+        echo "$file",$identifier,$title,$author,$publisher,$epubVersion,$epubStatus,$noErrors,$noWarnings,$errorsUnique,$warningsUnique,$wordCount >> $outFile
     fi
 
     #if [ $extension == "pdf" ] ; then
