@@ -108,9 +108,9 @@ while IFS= read -d $'\0' -r file ; do
         # Extract identifier (isbn), title, author and publisher name
 
         identifier=$(xmlstarlet sel -t -v "/_:jhove/_:repInfo/_:properties/_:property[_:name='Info']/_:values/_:property[_:name='Identifier']/_:values/_:value" $ecTemp)
-        title=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:properties/_:property/_:name[contains(.,"Title")]/_:values/_:value' $ecTemp)
-        author=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:properties/_:property/_:name[contains(.,"Creator")]/_:values/_:value' $ecTemp)
-        publisher=$(xmlstarlet sel -t -v '/_:jhove/_:repInfo/_:properties/_:property/_:name[contains(.,"Publisher")]/_:values/_:value' $ecTemp)
+        title=$(xmlstarlet sel -t -v "/_:jhove/_:repInfo/_:properties/_:property[_:name='Info']/_:values/_:property[_:name='Title']/_:values/_:value" $ecTemp)
+        author=$(xmlstarlet sel -t -v "/_:jhove/_:repInfo/_:properties/_:property[_:name='Info']/_:values/_:property[_:name='Creator']/_:values/_:value" $ecTemp)
+        publisher=$(xmlstarlet sel -t -v "/_:jhove/_:repInfo/_:properties/_:property[_:name='Info']/_:values/_:property[_:name='Publisher']/_:values/_:value" $ecTemp)
 
         # Submit file to Tika server, extract text and count number of words
         wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
