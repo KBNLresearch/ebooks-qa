@@ -2,7 +2,6 @@
 
 import sys
 import os
-import csv
 import urllib.request
 import codecs
 import pandas as pd
@@ -73,62 +72,35 @@ def main():
         sys.stderr.write("Cannot write output report\n")
         sys.exit()
 
-    # Read CSV data
-    # TODO: might be simpler to use IO tools: https://pandas.pydata.org/pandas-docs/stable/io.html
-    fEcResults = open(fileEcResults, "r", encoding="utf-8")
-    fEcResultsCSV = csv.reader(fEcResults)
-    headerEcResults = next(fEcResultsCSV)
-    rowsEcResults = [row for row in fEcResultsCSV]
-    fEcResults.close()
+    # Read CSV to Data Frame
+    epubsAll = pd.read_csv(fileEcResults, index_col=0, encoding="utf-8")
 
-    # Lists to store fields
-    fileName = []
-    epubVersion = []
-    epubStatus = []
-    noErrors = []
-    noWarnings = []
+    # Create lists to store all individual error and warning codes
     errorsAll = []
     warningsAll = []
-    wordCount = []
 
-    for row in rowsEcResults:
-        fileName.append(row[0])
-        epubVersion.append(row[1])
-        epubStatus.append(row[2])
-        noErrors.append(row[3])
-        noWarnings.append(row[4])
-        wordCount.append(row[7])
+    # Iterate over rows and extract errors and warnings fields
+    for index, row in epubsAll.iterrows():
+        errorsRow = row["errors"]
+        warningsRow = row["warnings"]
+        
+        if not pd.isnull(errorsRow):
+            # Split individual error codes into list
+            errorsAsList = errorsRow.split(' ')
 
-        # Split errors, warnings
-        errorsAsList = row[5].split(' ')
-        warningsAsList = row[6].split(' ')
+            # Add error codes to errorsAll
+            for error in errorsAsList:
+                if error != '':
+                    errorsAll.append(error)
 
-        for error in errorsAsList:
-            if error != '':
-                errorsAll.append(error)
-        for warning in warningsAsList:
-            if warning != '':
-                warningsAll.append(warning)
+        if not pd.isnull(warningsRow):
+            # Split individual warning codes into list
+            warningsAsList = warningsRow.split(' ')
 
-
-    # Put all attributes that are linked to one file in an array (transpose to make each list a column)
-    myArray = np.transpose([epubVersion, epubStatus, noErrors, noWarnings, wordCount])
-
-    # Create data frame
-    epubsAll = pd.DataFrame({'fileName' : np.array(fileName),
-                        'epubVersion' : np.array(epubVersion),
-                        'epubStatus' : np.array(epubStatus),
-                        'noErrors' : np.array(noErrors),
-                        'noWarnings' : np.array(noWarnings),
-                        'wordCount' : np.array(wordCount) })
-
-    # Set data type for each column
-    epubsAll = epubsAll.astype({'fileName': 'U',
-                      'epubVersion' : 'U',
-                      'epubStatus' : 'U',
-                      'noErrors' : 'u2', 
-                      'noWarnings' : 'u2',
-                      'wordCount' : 'u4'})
+            # Add warning codes to warningAll
+            for warning in warningsAsList:
+                if warning != '':
+                    warningsAll.append(warning)
 
     
     # Errors and Warnings lists have different size and are not linked to a file,
@@ -160,9 +132,9 @@ def main():
     fOut.write(dfToMarkdown(epubsWithWClt1000.describe()))
 
     # Frequency of EPUB versions
-    ebupVCounts = pd.Series(epubVersion).value_counts().to_frame()
+    epubVCounts = epubsAll['epubVersion'].value_counts().to_frame()
     fOut.write('\n\n## EPUB versions\n\n')
-    fOut.write(dfToMarkdown(ebupVCounts,['Version', 'Frequency']))
+    fOut.write(dfToMarkdown(epubVCounts,['epubVersion', 'Count']))
 
     # Frequency of errors
     errorCounts = errors.value_counts().to_frame(name="count")
@@ -175,7 +147,7 @@ def main():
     errorCounts.insert(0, 'description', errorDescriptions)
 
     fOut.write('\n\n## Frequency of validation errors\n\n')
-    fOut.write(dfToMarkdown(errorCounts,['Code', 'Description', 'Frequency']))
+    fOut.write(dfToMarkdown(errorCounts,['Code', 'Description', 'Count']))
 
     ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
                               lw=2.5,
@@ -200,7 +172,7 @@ def main():
     warningCounts.insert(0, 'description', warningDescriptions)
 
     fOut.write('\n\n## Frequency of validation warnings\n\n')
-    fOut.write(dfToMarkdown(warningCounts,['Code', 'Description', 'Frequency']))
+    fOut.write(dfToMarkdown(warningCounts,['Code', 'Description', 'Count']))
 
     wcPlot = warningCounts.sort_values(by="count").plot(kind='barh',
                               lw=2.5,
