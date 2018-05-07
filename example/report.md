@@ -68,49 +68,49 @@
 
 ## EPUB versions
 
-| Version   |   Frequency |
-|:----------|------------:|
-| 2.0.1     |        7862 |
-| 3.0.1     |         215 |
+| epubVersion   |   Count |   % of all EPUBs |
+|:--------------|--------:|-----------------:|
+| 2.0.1         |    7862 |            97.34 |
+| 3.0.1         |     215 |             2.66 |
 
 ## Frequency of validation errors
 
-| Code    | Description                                                                                                         |   Frequency |
-|:--------|:--------------------------------------------------------------------------------------------------------------------|------------:|
-| RSC-005 | Error while parsing file: %1$s                                                                                      |         591 |
-| RSC-008 | Referenced resource '%1$s' is not declared in the OPF manifest.                                                     |         416 |
-| OPF-054 | Date value '%1$s' is not valid as per http://www.w3.org/TR/NOTE-datetime:%2$s.                                      |         288 |
-| OPF-032 | Guide references '%1$s' which is not a valid 'OPS Content Document'.                                                |         160 |
-| CSS-008 | An error occurred while parsing the CSS: %1$s.                                                                      |         141 |
-| HTM-009 | The DOCTYPE provided is obsolete or irregular and can be removed.                                                   |         105 |
-| OPF-050 | TOC attribute references resource with non-NCX mime type; 'application/x-dtbncx+xml' is expected.                   |          98 |
-| RSC-007 | Referenced resource '%1$s' could not be found in the EPUB.                                                          |          76 |
-| HTM-004 | Irregular DOCTYPE: found '%1$s', expected '%2$s'.                                                                   |          63 |
-| RSC-020 | '%1$s' is not a valid URI.                                                                                          |          56 |
-| HTM-001 | Any publication resource that is an XML-based media type must be a valid XML 1.0 document. XML version found: %1$s. |          30 |
-| OPF-052 | Role value '%1$s' is not valid.                                                                                     |          23 |
-| OPF-031 | File listed in reference element in guide was not declared in OPF manifest: %1$s.                                   |          11 |
-| OPF-034 | The spine contains multiple references to the manifest item with id '%1$s'.                                         |           5 |
-| PKG-007 | Mimetype file should only contain the string 'application/epub+zip' and should not be compressed.                   |           4 |
-| HTM-046 | Fixed format item has no viewport defined.                                                                          |           1 |
-| OPF-073 | External identifiers must not appear in the document type declaration.                                              |           1 |
-| NCX-002 | toc attribute was not found on the spine element.                                                                   |           1 |
+| Code    | Description                                                                                                         |   Count |   % of all EPUBs |
+|:--------|:--------------------------------------------------------------------------------------------------------------------|--------:|-----------------:|
+| RSC-005 | Error while parsing file: %1$s                                                                                      |     591 |             7.32 |
+| RSC-008 | Referenced resource '%1$s' is not declared in the OPF manifest.                                                     |     416 |             5.15 |
+| OPF-054 | Date value '%1$s' is not valid as per http://www.w3.org/TR/NOTE-datetime:%2$s.                                      |     288 |             3.57 |
+| OPF-032 | Guide references '%1$s' which is not a valid 'OPS Content Document'.                                                |     160 |             1.98 |
+| CSS-008 | An error occurred while parsing the CSS: %1$s.                                                                      |     141 |             1.75 |
+| HTM-009 | The DOCTYPE provided is obsolete or irregular and can be removed.                                                   |     105 |             1.3  |
+| OPF-050 | TOC attribute references resource with non-NCX mime type; 'application/x-dtbncx+xml' is expected.                   |      98 |             1.21 |
+| RSC-007 | Referenced resource '%1$s' could not be found in the EPUB.                                                          |      76 |             0.94 |
+| HTM-004 | Irregular DOCTYPE: found '%1$s', expected '%2$s'.                                                                   |      63 |             0.78 |
+| RSC-020 | '%1$s' is not a valid URI.                                                                                          |      56 |             0.69 |
+| HTM-001 | Any publication resource that is an XML-based media type must be a valid XML 1.0 document. XML version found: %1$s. |      30 |             0.37 |
+| OPF-052 | Role value '%1$s' is not valid.                                                                                     |      23 |             0.28 |
+| OPF-031 | File listed in reference element in guide was not declared in OPF manifest: %1$s.                                   |      11 |             0.14 |
+| OPF-034 | The spine contains multiple references to the manifest item with id '%1$s'.                                         |       5 |             0.06 |
+| PKG-007 | Mimetype file should only contain the string 'application/epub+zip' and should not be compressed.                   |       4 |             0.05 |
+| HTM-046 | Fixed format item has no viewport defined.                                                                          |       1 |             0.01 |
+| NCX-002 | toc attribute was not found on the spine element.                                                                   |       1 |             0.01 |
+| OPF-073 | External identifiers must not appear in the document type declaration.                                              |       1 |             0.01 |
 
 ![](errors.png)
 
 
 ## Frequency of validation warnings
 
-| Code     | Description                                                                                            |   Frequency |
-|:---------|:-------------------------------------------------------------------------------------------------------|------------:|
-| PKG-010  | Filename contains spaces, therefore URI escaping is necessary. Consider removing spaces from filename. |         859 |
-| OPF-003  | Item '%1$s' exists in the EPUB, but is not declared in the OPF manifest.                               |         433 |
-| CSS-017  | CSS selector specifies absolute position.                                                              |         184 |
-| HTM-014  | Invalid file extension for HTML file, expecting (html, htm or xhtml).                                  |          24 |
-| PKG-014  | The EPUB contains empty directory '%1$s'.                                                              |          17 |
-| OPF-055  | %1$s tag is empty.                                                                                     |           9 |
-| HTM-014a | XHTML Content Document file name '%1$s' should have the extension '.xhtml'.                            |           7 |
-| PKG-012  | File name contains the following non-ascii characters: %1$s. Consider changing the filename.           |           5 |
-| CSS-006  | CSS position:fixed property should not be used in EPUBs.                                               |           1 |
+| Code     | Description                                                                                            |   Count |   % of all EPUBs |
+|:---------|:-------------------------------------------------------------------------------------------------------|--------:|-----------------:|
+| PKG-010  | Filename contains spaces, therefore URI escaping is necessary. Consider removing spaces from filename. |     859 |            10.64 |
+| OPF-003  | Item '%1$s' exists in the EPUB, but is not declared in the OPF manifest.                               |     433 |             5.36 |
+| CSS-017  | CSS selector specifies absolute position.                                                              |     184 |             2.28 |
+| HTM-014  | Invalid file extension for HTML file, expecting (html, htm or xhtml).                                  |      24 |             0.3  |
+| PKG-014  | The EPUB contains empty directory '%1$s'.                                                              |      17 |             0.21 |
+| OPF-055  | %1$s tag is empty.                                                                                     |       9 |             0.11 |
+| HTM-014a | XHTML Content Document file name '%1$s' should have the extension '.xhtml'.                            |       7 |             0.09 |
+| PKG-012  | File name contains the following non-ascii characters: %1$s. Consider changing the filename.           |       5 |             0.06 |
+| CSS-006  | CSS position:fixed property should not be used in EPUBs.                                               |       1 |             0.01 |
 
 ![](warnings.png)
