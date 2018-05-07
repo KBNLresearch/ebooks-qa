@@ -1,5 +1,7 @@
 # EPUB analysis report
 
+Report generated: 2018-05-07 17:24:54
+
 
 ## Summary
 
@@ -10,6 +12,15 @@
 | EPUBs with warnings             |    1336 | 16.54            |
 | EPUBs with errors or warnings   |    2270 | 28.1             |
 | EPUBs with less than 1000 words |     305 | 3.78             |
+
+## CSV subsets
+
+|                                 | File                                         |
+|:--------------------------------|:---------------------------------------------|
+| EPUBs with errors               | [errors.csv](errors.csv)                     |
+| EPUBs with warnings             | [warnings.csv](warnings.csv)                 |
+| EPUBs with errors or warnings   | [errorsorwarnings.csv](errorsorwarnings.csv) |
+| EPUBs with less than 1000 words | [wordcountlt1000.csv](wordcountlt1000.csv)   |
 
 ## EPUB versions
 

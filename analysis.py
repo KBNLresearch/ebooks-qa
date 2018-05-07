@@ -4,6 +4,7 @@ import sys
 import os
 import urllib.request
 import codecs
+import datetime
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -68,6 +69,8 @@ def main():
     try:
         fOut = codecs.open(os.path.join(dirOut, 'report.md'), "w", "utf-8")
         fOut.write('# EPUB analysis report\n')
+
+        fOut.write('\nReport generated: ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n')
     except:
         sys.stderr.write("Cannot write output report\n")
         sys.exit()
@@ -239,6 +242,7 @@ def main():
     wcPlot.set_ylabel('Warning') 
    
     fig = wcPlot.get_figure()
+    fig.savefig(os.path.join(dirOut, 'warnings.png'))
 
     # Write detailed statistics
     fOut.write('\n\n## Detailed statistics\n\n')
