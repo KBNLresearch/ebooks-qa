@@ -111,32 +111,34 @@ def main():
     # Number of files
     noEpubs = len(epubsAll)
 
-    fOut.write('\n\n## All EPUBs\n\n')
-    fOut.write(dfToMarkdown(epubsAll.describe()))
-
     # EPUBs with errors
     epubsWithErrors = epubsAll[epubsAll.noErrors > 0]
-    fOut.write('\n\n## EPUBs with errors\n\n')
-    fOut.write(dfToMarkdown(epubsWithErrors.describe()))
     noEpubsWithErrors = len(epubsWithErrors)
 
     # EPUBs with warnings
     epubsWithWarnings = epubsAll[epubsAll.noWarnings > 0]
-    fOut.write('\n\n## EPUBs with warnings\n\n')
-    fOut.write(dfToMarkdown(epubsWithWarnings.describe()))
     noEpubsWithWarnings = len(epubsWithWarnings)
 
     # EPUBs with errors or warnings
     epubsWithErrorsOrWarnings = epubsAll[(epubsAll.noErrors > 0) | (epubsAll.noWarnings > 0)]
-    fOut.write('\n\n## EPUBs with errors or warnings\n\n')
-    fOut.write(dfToMarkdown(epubsWithErrorsOrWarnings.describe()))
     noEpubsWithErrorsOrWarnings = len(epubsWithErrorsOrWarnings)
 
     # EPUBs with word count < 1000
     epubsWithWClt1000 = epubsAll[epubsAll.wordCount < 1000]
-    fOut.write('\n\n## EPUBs with less than 1000 words\n\n')
-    fOut.write(dfToMarkdown(epubsWithWClt1000.describe()))
     noEpubsWithWClt1000 = len(epubsWithWClt1000)
+
+    # Create summary table
+    summaryTable = [
+                    ['EPUBs', noEpubs, ''],
+                    ['EPUBs with errors', noEpubsWithErrors, round(100*noEpubsWithErrors/noEpubs, 2)],
+                    ['EPUBs with warnings', noEpubsWithWarnings, round(100*noEpubsWithWarnings/noEpubs, 2)],
+                    ['EPUBs with errors or warnings', noEpubsWithErrorsOrWarnings, round(100*noEpubsWithErrorsOrWarnings/noEpubs, 2)],
+                    ['EPUBs with less than 1000 words', noEpubsWithWClt1000, round(100*noEpubsWithWClt1000/noEpubs, 2)]]
+
+    headers = ['', 'Count', '% of all EPUBs']
+
+    fOut.write('\n\n## Summary\n\n')
+    fOut.write(tabulate(summaryTable, headers, tablefmt='pipe'))
 
     # Frequency of EPUB versions
     epubVCounts = epubsAll['epubVersion'].value_counts().to_frame()
@@ -172,17 +174,6 @@ def main():
     fOut.write('\n\n## Frequency of validation errors\n\n')
     fOut.write(dfToMarkdown(errorCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
 
-    ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
-                                                      y='count',
-                                                      lw=2.5,
-                                                      figsize=(8,8))
-
-    ecPlot.set_xlabel('Count')
-    ecPlot.set_ylabel('Error') 
-
-    fig = ecPlot.get_figure()
-    fig.savefig(os.path.join(dirOut, 'errors.png'))
-
     fOut.write('\n\n![](errors.png)\n')
 
     # Frequency of warnings
@@ -205,6 +196,20 @@ def main():
     fOut.write('\n\n## Frequency of validation warnings\n\n')
     fOut.write(dfToMarkdown(warningCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
 
+    fOut.write('\n\n![](warnings.png)\n')
+
+    # Plots of errors and warnings
+    ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
+                                                      y='count',
+                                                      lw=2.5,
+                                                      figsize=(8,8))
+
+    ecPlot.set_xlabel('Count')
+    ecPlot.set_ylabel('Error') 
+
+    fig = ecPlot.get_figure()
+    fig.savefig(os.path.join(dirOut, 'errors.png'))
+
     wcPlot = warningCounts.sort_values(by="count").plot(kind='barh',
                                                         y='count',
                                                         lw=2.5,
@@ -214,9 +219,26 @@ def main():
     wcPlot.set_ylabel('Warning') 
    
     fig = wcPlot.get_figure()
-    fig.savefig(os.path.join(dirOut, 'warnings.png'))
 
-    fOut.write('\n\n![](warnings.png)\n')
+    # Write detailed statistics
+    fOut.write('\n\n## Detailed statistics\n\n')
+
+    fOut.write('\n\n### All EPUBs\n\n')
+    fOut.write(dfToMarkdown(epubsAll.describe()))
+
+    fOut.write('\n\n### EPUBs with errors\n\n')
+    fOut.write(dfToMarkdown(epubsWithErrors.describe()))
+
+    fOut.write('\n\n### EPUBs with warnings\n\n')
+    fOut.write(dfToMarkdown(epubsWithWarnings.describe()))
+
+    fOut.write('\n\n### EPUBs with errors or warnings\n\n')
+    fOut.write(dfToMarkdown(epubsWithErrorsOrWarnings.describe()))
+
+    fOut.write('\n\n### EPUBs with less than 1000 words\n\n')
+    fOut.write(dfToMarkdown(epubsWithWClt1000.describe()))
+
+    fOut.write('\n')
 
     # Close report
     fOut.close()

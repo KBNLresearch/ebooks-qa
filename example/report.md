@@ -1,70 +1,15 @@
 # EPUB analysis report
 
 
-## All EPUBs
+## Summary
 
-|       |    noErrors |   noWarnings |   wordCount |
-|:------|------------:|-------------:|------------:|
-| count | 8077        |  8077        |      8077   |
-| mean  |    0.256283 |     0.190541 |     68291.2 |
-| std   |    0.571692 |     0.453886 |     53316.5 |
-| min   |    0        |     0        |         0   |
-| 25%   |    0        |     0        |     32100   |
-| 50%   |    0        |     0        |     59506   |
-| 75%   |    0        |     0        |     92629   |
-| max   |    5        |     3        |    606533   |
-
-## EPUBs with errors
-
-|       |    noErrors |   noWarnings |   wordCount |
-|:------|------------:|-------------:|------------:|
-| count | 1567        |  1567        |      1567   |
-| mean  |    1.321    |     0.522017 |     75689.6 |
-| std   |    0.527373 |     0.701663 |     53922   |
-| min   |    1        |     0        |         0   |
-| 25%   |    1        |     0        |     41452   |
-| 50%   |    1        |     0        |     68594   |
-| 75%   |    2        |     1        |     96481   |
-| max   |    5        |     3        |    606533   |
-
-## EPUBs with warnings
-
-|       |    noErrors |   noWarnings |   wordCount |
-|:------|------------:|-------------:|------------:|
-| count | 1336        |  1336        |      1336   |
-| mean  |    0.712575 |     1.15195  |     65321   |
-| std   |    0.842517 |     0.371408 |     54989.8 |
-| min   |    0        |     1        |         0   |
-| 25%   |    0        |     1        |     27475.8 |
-| 50%   |    0        |     1        |     55474   |
-| 75%   |    1        |     1        |     94484.2 |
-| max   |    5        |     3        |    446298   |
-
-## EPUBs with errors or warnings
-
-|       |    noErrors |   noWarnings |   wordCount |
-|:------|------------:|-------------:|------------:|
-| count | 2270        |  2270        |      2270   |
-| mean  |    0.911894 |     0.677974 |     70058   |
-| std   |    0.75178  |     0.634542 |     54981.3 |
-| min   |    0        |     0        |         0   |
-| 25%   |    0        |     0        |     33130   |
-| 50%   |    1        |     1        |     62695   |
-| 75%   |    1        |     1        |     94935.8 |
-| max   |    5        |     3        |    606533   |
-
-## EPUBs with less than 1000 words
-
-|       |   noErrors |   noWarnings |   wordCount |
-|:------|-----------:|-------------:|------------:|
-| count | 305        |   305        |     305     |
-| mean  |   0.104918 |     0.55082  |     222.839 |
-| std   |   0.374529 |     0.504787 |     233.306 |
-| min   |   0        |     0        |       0     |
-| 25%   |   0        |     0        |      52     |
-| 50%   |   0        |     1        |     178     |
-| 75%   |   0        |     1        |     312     |
-| max   |   4        |     2        |     994     |
+|                                 |   Count | % of all EPUBs   |
+|:--------------------------------|--------:|:-----------------|
+| EPUBs                           |    8077 |                  |
+| EPUBs with errors               |    1567 | 19.4             |
+| EPUBs with warnings             |    1336 | 16.54            |
+| EPUBs with errors or warnings   |    2270 | 28.1             |
+| EPUBs with less than 1000 words |     305 | 3.78             |
 
 ## EPUB versions
 
@@ -93,8 +38,8 @@
 | OPF-034 | The spine contains multiple references to the manifest item with id '%1$s'.                                         |       5 |             0.06 |
 | PKG-007 | Mimetype file should only contain the string 'application/epub+zip' and should not be compressed.                   |       4 |             0.05 |
 | HTM-046 | Fixed format item has no viewport defined.                                                                          |       1 |             0.01 |
-| NCX-002 | toc attribute was not found on the spine element.                                                                   |       1 |             0.01 |
 | OPF-073 | External identifiers must not appear in the document type declaration.                                              |       1 |             0.01 |
+| NCX-002 | toc attribute was not found on the spine element.                                                                   |       1 |             0.01 |
 
 ![](errors.png)
 
@@ -114,3 +59,73 @@
 | CSS-006  | CSS position:fixed property should not be used in EPUBs.                                               |       1 |             0.01 |
 
 ![](warnings.png)
+
+
+## Detailed statistics
+
+
+
+### All EPUBs
+
+|       |    noErrors |   noWarnings |   wordCount |
+|:------|------------:|-------------:|------------:|
+| count | 8077        |  8077        |      8077   |
+| mean  |    0.256283 |     0.190541 |     68291.2 |
+| std   |    0.571692 |     0.453886 |     53316.5 |
+| min   |    0        |     0        |         0   |
+| 25%   |    0        |     0        |     32100   |
+| 50%   |    0        |     0        |     59506   |
+| 75%   |    0        |     0        |     92629   |
+| max   |    5        |     3        |    606533   |
+
+### EPUBs with errors
+
+|       |    noErrors |   noWarnings |   wordCount |
+|:------|------------:|-------------:|------------:|
+| count | 1567        |  1567        |      1567   |
+| mean  |    1.321    |     0.522017 |     75689.6 |
+| std   |    0.527373 |     0.701663 |     53922   |
+| min   |    1        |     0        |         0   |
+| 25%   |    1        |     0        |     41452   |
+| 50%   |    1        |     0        |     68594   |
+| 75%   |    2        |     1        |     96481   |
+| max   |    5        |     3        |    606533   |
+
+### EPUBs with warnings
+
+|       |    noErrors |   noWarnings |   wordCount |
+|:------|------------:|-------------:|------------:|
+| count | 1336        |  1336        |      1336   |
+| mean  |    0.712575 |     1.15195  |     65321   |
+| std   |    0.842517 |     0.371408 |     54989.8 |
+| min   |    0        |     1        |         0   |
+| 25%   |    0        |     1        |     27475.8 |
+| 50%   |    0        |     1        |     55474   |
+| 75%   |    1        |     1        |     94484.2 |
+| max   |    5        |     3        |    446298   |
+
+### EPUBs with errors or warnings
+
+|       |    noErrors |   noWarnings |   wordCount |
+|:------|------------:|-------------:|------------:|
+| count | 2270        |  2270        |      2270   |
+| mean  |    0.911894 |     0.677974 |     70058   |
+| std   |    0.75178  |     0.634542 |     54981.3 |
+| min   |    0        |     0        |         0   |
+| 25%   |    0        |     0        |     33130   |
+| 50%   |    1        |     1        |     62695   |
+| 75%   |    1        |     1        |     94935.8 |
+| max   |    5        |     3        |    606533   |
+
+### EPUBs with less than 1000 words
+
+|       |   noErrors |   noWarnings |   wordCount |
+|:------|-----------:|-------------:|------------:|
+| count | 305        |   305        |     305     |
+| mean  |   0.104918 |     0.55082  |     222.839 |
+| std   |   0.374529 |     0.504787 |     233.306 |
+| min   |   0        |     0        |       0     |
+| 25%   |   0        |     0        |      52     |
+| 50%   |   0        |     1        |     178     |
+| 75%   |   0        |     1        |     312     |
+| max   |   4        |     2        |     994     |
