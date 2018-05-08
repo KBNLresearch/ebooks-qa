@@ -116,7 +116,7 @@ while IFS= read -d $'\0' -r file ; do
         wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
 
         # Write results to output file
-        echo "$file",$identifier,$title,$author,$publisher,$epubVersion,$epubStatus,$noErrors,$noWarnings,$errorsUnique,$warningsUnique,$wordCount >> $outFile
+        echo \"$file\",\"$identifier\",\"$title\",\"$author\",\"$publisher\",$epubVersion,$epubStatus,$noErrors,$noWarnings,$errorsUnique,$warningsUnique,$wordCount >> $outFile
     fi
 
     #if [ $extension == "pdf" ] ; then
