@@ -184,6 +184,8 @@ def main():
     # also report CSV file of all EPUBs for each error code
     errorDescriptions = []
     errorRelFrequencies = []
+    errorLinkTable = []
+    errorLinkheaders = ['Code', 'File']
 
     for i, row in errorCounts.iterrows():
         description = messageLookup.get(i, "n/a")
@@ -196,6 +198,8 @@ def main():
         records = epubsWithErrors[epubsWithErrors['errors'].str.contains(str(i))]
         fName = 'error-' + str(i) + '.csv'
         records.to_csv(os.path.join(dirOut, fName), encoding='utf-8')
+        # Add link to link table
+        errorLinkTable.append([str(i), '[' + fName + '](' + fName + ')'])
 
     errorCounts.insert(0, 'description', errorDescriptions)
     errorCounts.insert(2, '%', errorRelFrequencies)
@@ -205,6 +209,9 @@ def main():
 
     fOut.write('\n\n![](errors.png)\n')
 
+    fOut.write('\n\n## CSV subsets for each error\n\n')
+    fOut.write(tabulate(errorLinkTable, errorLinkheaders, tablefmt='pipe'))
+
     # Frequency of warnings
     warningCounts = warnings.value_counts().to_frame(name="count")
 
@@ -212,6 +219,8 @@ def main():
     # also report CSV file of all EPUBs for each warning code
     warningDescriptions = []
     warningRelFrequencies = []
+    warningLinkTable = []
+    warningLinkheaders = ['Code', 'File']
 
     for i, row in warningCounts.iterrows():
         description = messageLookup.get(i, "n/a")
@@ -224,6 +233,8 @@ def main():
         records = epubsWithWarnings[epubsWithWarnings['warnings'].str.contains(str(i))]
         fName = 'warning-' + str(i) + '.csv'
         records.to_csv(os.path.join(dirOut, fName), encoding='utf-8')
+        # Add link to link table
+        warningLinkTable.append([str(i), '[' + fName + '](' + fName + ')'])
 
     warningCounts.insert(0, 'description', warningDescriptions)
     warningCounts.insert(2, '%', warningRelFrequencies)
@@ -232,6 +243,9 @@ def main():
     fOut.write(dfToMarkdown(warningCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
 
     fOut.write('\n\n![](warnings.png)\n')
+
+    fOut.write('\n\n## CSV subsets for each warning\n\n')
+    fOut.write(tabulate(warningLinkTable, warningLinkheaders, tablefmt='pipe'))
 
     # Plots of errors and warnings
     ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
@@ -257,7 +271,7 @@ def main():
     fig.savefig(os.path.join(dirOut, 'warnings.png'))
 
     # Write detailed statistics
-    fOut.write('\n\n## Detailed statistics\n\n')
+    fOut.write('\n\n## Detailed statistics\n')
 
     fOut.write('\n\n### All EPUBs\n\n')
     fOut.write(dfToMarkdown(epubsAll.describe()))
