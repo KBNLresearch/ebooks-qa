@@ -181,6 +181,7 @@ def main():
     errorCounts = errors.value_counts().to_frame(name="count")
 
     # Insert columns with error descriptions and relative frequencies
+    # also report CSV file of all EPUBs for each error code
     errorDescriptions = []
     errorRelFrequencies = []
 
@@ -190,7 +191,11 @@ def main():
 
         relFrequency = 100*row["count"]/noEpubs
         errorRelFrequencies.append(round(relFrequency, 2))
-        
+
+        # Select all corresponding records with this error and write to CSV
+        records = epubsWithErrors[epubsWithErrors['errors'].str.contains(str(i))]
+        records.to_csv(os.path.join(dirOut, 'error-' + str(i) + '.csv'), encoding='utf-8')
+
     errorCounts.insert(0, 'description', errorDescriptions)
     errorCounts.insert(2, '%', errorRelFrequencies)
 
@@ -203,6 +208,7 @@ def main():
     warningCounts = warnings.value_counts().to_frame(name="count")
 
     # Insert columns with warning descriptions and relative frequencies
+    # also report CSV file of all EPUBs for each warning code
     warningDescriptions = []
     warningRelFrequencies = []
 
@@ -212,6 +218,10 @@ def main():
 
         relFrequency = 100*row["count"]/noEpubs
         warningRelFrequencies.append(round(relFrequency, 2))
+
+        # Select all corresponding records with this warning and write to CSV
+        records = epubsWithWarnings[epubsWithWarnings['warnings'].str.contains(str(i))]
+        records.to_csv(os.path.join(dirOut, 'warning-' + str(i) + '.csv'), encoding='utf-8')
 
     warningCounts.insert(0, 'description', warningDescriptions)
     warningCounts.insert(2, '%', warningRelFrequencies)
