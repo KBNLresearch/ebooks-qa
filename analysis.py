@@ -194,7 +194,8 @@ def main():
 
         # Select all corresponding records with this error and write to CSV
         records = epubsWithErrors[epubsWithErrors['errors'].str.contains(str(i))]
-        records.to_csv(os.path.join(dirOut, 'error-' + str(i) + '.csv'), encoding='utf-8')
+        fName = 'error-' + str(i) + '.csv'
+        records.to_csv(os.path.join(dirOut, fName), encoding='utf-8')
 
     errorCounts.insert(0, 'description', errorDescriptions)
     errorCounts.insert(2, '%', errorRelFrequencies)
@@ -221,7 +222,8 @@ def main():
 
         # Select all corresponding records with this warning and write to CSV
         records = epubsWithWarnings[epubsWithWarnings['warnings'].str.contains(str(i))]
-        records.to_csv(os.path.join(dirOut, 'warning-' + str(i) + '.csv'), encoding='utf-8')
+        fName = 'warning-' + str(i) + '.csv'
+        records.to_csv(os.path.join(dirOut, fName), encoding='utf-8')
 
     warningCounts.insert(0, 'description', warningDescriptions)
     warningCounts.insert(2, '%', warningRelFrequencies)
