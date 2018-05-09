@@ -27,8 +27,9 @@ ecTemp=epubcheck_temp.xml
 sleepValue=3
 
 # Check command line args
-if [ "$#" -ne 2 ] ; then
-  echo "Usage: ebooksqa.sh rootDirectory prefixOut" >&2
+if [ "$#" -lt 2 ] ; then
+  echo "Usage: ebooksqa.sh rootDirectory prefixOut [extractMetadata]" >&2
+    echo "       extractMetadata: extract metadata (may result in malformed CSV!)" >&2
   exit 1
 fi
 
@@ -42,6 +43,9 @@ rootDir="$1"
 
 # Output file
 outFile="$2.csv"
+
+# Metadata extraction flag
+mdFlag=${3:-dontExtract}
 
 # Files to store stderr output for tika server, extraction process and EpubCheck
 tikaServerErr=tika-server.stderr
@@ -68,7 +72,11 @@ echo "Waiting for Tika server to initialise ..."
 sleep $sleepValue
 
 # Write header line to output file
-echo "fileName","identifier","title","author","publisher","epubVersion","epubStatus","noErrors","noWarnings","errors","warnings","wordCount" > $outFile
+if [ $mdFlag == "extractMetadata" ] ; then
+    echo "fileName","identifier","title","author","publisher","epubVersion","epubStatus","noErrors","noWarnings","errors","warnings","wordCount" > $outFile
+else
+    echo "fileName","epubVersion","epubStatus","noErrors","noWarnings","errors","warnings","wordCount" > $outFile
+fi
 
 echo "Processing directory tree ..."
 
@@ -116,7 +124,12 @@ while IFS= read -d $'\0' -r file ; do
         wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
 
         # Write results to output file
-        echo \"$file\",\"$identifier\",\"$title\",\"$author\",\"$publisher\",$epubVersion,$epubStatus,$noErrors,$noWarnings,$errorsUnique,$warningsUnique,$wordCount >> $outFile
+        if [ $mdFlag == "extractMetadata" ] ; then
+            echo \"$file\",\"$identifier\",\"$title\",\"$author\",\"$publisher\",$epubVersion,$epubStatus,$noErrors,$noWarnings,$errorsUnique,$warningsUnique,$wordCount >> $outFile
+        else
+            echo \"$file\",$epubVersion,$epubStatus,$noErrors,$noWarnings,$errorsUnique,$warningsUnique,$wordCount >> $outFile
+        fi
+
     fi
 
     #if [ $extension == "pdf" ] ; then

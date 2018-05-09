@@ -71,12 +71,17 @@ def main():
         fOut.write('# EPUB analysis report\n')
 
         fOut.write('\nReport generated: ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n')
+        fOut.write('\nInput file: ' + fileEcResults + '\n')
     except:
         sys.stderr.write("Cannot write output report\n")
         sys.exit()
 
     # Read CSV to Data Frame
     epubsAll = pd.read_csv(fileEcResults, index_col=0, encoding="utf-8")
+
+    ## TEST
+    epubsAll.to_csv(os.path.join(dirOut, 'all.csv'), encoding='utf-8')
+    ## TEST
 
     # Create lists to store all individual error and warning codes
     errorsAll = []
