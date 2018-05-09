@@ -44,6 +44,15 @@ def main():
     if not os.path.isdir(dirOut):
         os.makedirs(dirOut)
 
+    dirCSV = os.path.join(dirOut, 'csv')
+    dirImg = os.path.join(dirOut, 'img')
+
+    if not os.path.isdir(dirCSV):
+        os.makedirs(dirCSV)
+
+    if not os.path.isdir(dirImg):
+        os.makedirs(dirImg)
+
     # Download Epubcheck MessageBundle.properties file
     try:        
         response = urllib.request.urlopen('https://raw.githubusercontent.com/IDPF/epubcheck/master/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties')
@@ -78,10 +87,6 @@ def main():
 
     # Read CSV to Data Frame
     epubsAll = pd.read_csv(fileEcResults, index_col=0, encoding="utf-8")
-
-    ## TEST
-    epubsAll.to_csv(os.path.join(dirOut, 'all.csv'), encoding='utf-8')
-    ## TEST
 
     # Create lists to store all individual error and warning codes
     errorsAll = []
@@ -123,25 +128,25 @@ def main():
     epubsWithErrors = epubsAll[epubsAll.noErrors > 0]
     noEpubsWithErrors = len(epubsWithErrors)
     # Write to CSV
-    epubsWithErrors.to_csv(os.path.join(dirOut, 'errors.csv'), encoding='utf-8')
+    epubsWithErrors.to_csv(os.path.join(dirCSV, 'errors.csv'), encoding='utf-8')
 
     # EPUBs with warnings
     epubsWithWarnings = epubsAll[epubsAll.noWarnings > 0]
     noEpubsWithWarnings = len(epubsWithWarnings)
     # Write to CSV
-    epubsWithWarnings.to_csv(os.path.join(dirOut, 'warnings.csv'), encoding='utf-8')
+    epubsWithWarnings.to_csv(os.path.join(dirCSV, 'warnings.csv'), encoding='utf-8')
 
     # EPUBs with errors or warnings
     epubsWithErrorsOrWarnings = epubsAll[(epubsAll.noErrors > 0) | (epubsAll.noWarnings > 0)]
     noEpubsWithErrorsOrWarnings = len(epubsWithErrorsOrWarnings)
     # Write to CSV
-    epubsWithErrorsOrWarnings.to_csv(os.path.join(dirOut, 'errorsorwarnings.csv'), encoding='utf-8')
+    epubsWithErrorsOrWarnings.to_csv(os.path.join(dirCSV, 'errorsorwarnings.csv'), encoding='utf-8')
 
     # EPUBs with word count < 1000
     epubsWithWClt1000 = epubsAll[epubsAll.wordCount < 1000]
     noEpubsWithWClt1000 = len(epubsWithWClt1000)
     # Write to CSV
-    epubsWithWClt1000.to_csv(os.path.join(dirOut, 'wordcountlt1000.csv'), encoding='utf-8')
+    epubsWithWClt1000.to_csv(os.path.join(dirCSV, 'wordcountlt1000.csv'), encoding='utf-8')
 
     # Create summary table
     summaryTable = [
@@ -158,10 +163,10 @@ def main():
 
     # Create table with links to generated CSV files
     csvTable = [
-                ['EPUBs with errors', '[errors.csv](errors.csv)'],
-                ['EPUBs with warnings', '[warnings.csv](warnings.csv)'],
-                ['EPUBs with errors or warnings', '[errorsorwarnings.csv](errorsorwarnings.csv)'],
-                ['EPUBs with less than 1000 words', '[wordcountlt1000.csv](wordcountlt1000.csv)']]
+                ['EPUBs with errors', '[errors.csv](./csv/errors.csv)'],
+                ['EPUBs with warnings', '[warnings.csv](./csv/warnings.csv)'],
+                ['EPUBs with errors or warnings', '[errorsorwarnings.csv](./csv/errorsorwarnings.csv)'],
+                ['EPUBs with less than 1000 words', '[wordcountlt1000.csv](./csv/wordcountlt1000.csv)']]
 
     headers = ['', 'File']
 
@@ -202,9 +207,9 @@ def main():
         # Select all corresponding records with this error and write to CSV
         records = epubsWithErrors[epubsWithErrors['errors'].str.contains(str(i))]
         fName = 'error-' + str(i) + '.csv'
-        records.to_csv(os.path.join(dirOut, fName), encoding='utf-8')
+        records.to_csv(os.path.join(dirCSV, fName), encoding='utf-8')
         # Add link to link table
-        errorLinkTable.append([str(i), '[' + fName + '](' + fName + ')'])
+        errorLinkTable.append([str(i), '[' + fName + '](' + './csv/' + fName + ')'])
 
     errorCounts.insert(0, 'description', errorDescriptions)
     errorCounts.insert(2, '%', errorRelFrequencies)
@@ -212,7 +217,7 @@ def main():
     fOut.write('\n\n## Frequency of validation errors\n\n')
     fOut.write(dfToMarkdown(errorCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
 
-    fOut.write('\n\n![](errors.png)\n')
+    fOut.write('\n\n![](./img/errors.png)\n')
 
     fOut.write('\n\n## CSV subsets for each error\n\n')
     fOut.write(tabulate(errorLinkTable, errorLinkheaders, tablefmt='pipe'))
@@ -237,9 +242,9 @@ def main():
         # Select all corresponding records with this warning and write to CSV
         records = epubsWithWarnings[epubsWithWarnings['warnings'].str.contains(str(i))]
         fName = 'warning-' + str(i) + '.csv'
-        records.to_csv(os.path.join(dirOut, fName), encoding='utf-8')
+        records.to_csv(os.path.join(dirCSV, fName), encoding='utf-8')
         # Add link to link table
-        warningLinkTable.append([str(i), '[' + fName + '](' + fName + ')'])
+        warningLinkTable.append([str(i), '[' + fName + '](' + './csv/' + fName + ')'])
 
     warningCounts.insert(0, 'description', warningDescriptions)
     warningCounts.insert(2, '%', warningRelFrequencies)
@@ -247,7 +252,7 @@ def main():
     fOut.write('\n\n## Frequency of validation warnings\n\n')
     fOut.write(dfToMarkdown(warningCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
 
-    fOut.write('\n\n![](warnings.png)\n')
+    fOut.write('\n\n![](./img/warnings.png)\n')
 
     fOut.write('\n\n## CSV subsets for each warning\n\n')
     fOut.write(tabulate(warningLinkTable, warningLinkheaders, tablefmt='pipe'))
@@ -262,7 +267,7 @@ def main():
     ecPlot.set_ylabel('Error') 
 
     fig = ecPlot.get_figure()
-    fig.savefig(os.path.join(dirOut, 'errors.png'))
+    fig.savefig(os.path.join(dirImg, 'errors.png'))
 
     wcPlot = warningCounts.sort_values(by="count").plot(kind='barh',
                                                         y='count',
@@ -273,7 +278,7 @@ def main():
     wcPlot.set_ylabel('Warning') 
    
     fig = wcPlot.get_figure()
-    fig.savefig(os.path.join(dirOut, 'warnings.png'))
+    fig.savefig(os.path.join(dirImg, 'warnings.png'))
 
     # Write detailed statistics
     fOut.write('\n\n## Detailed statistics\n')
