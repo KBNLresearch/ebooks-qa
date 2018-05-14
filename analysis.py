@@ -90,18 +90,13 @@ def main():
             desc = lineSplit[1]
             messageLookup[code] = desc
 
-    # Open output report (Markdown format) for writing
-    try:
-        reportMD = os.path.join(dirOut, 'report.md')
-        fOut = codecs.open(reportMD, "w", "utf-8")
-        mdString = ''
-        mdString += '# EPUB analysis report\n'
+    # Markdown-formatted string that is used to write report
+    mdString = ''
+    mdString += '# EPUB analysis report\n'
 
-        mdString += '\nReport generated: ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n'
-        mdString += '\nInput file: ' + fileEcResults + '\n'
-    except:
-        sys.stderr.write("Cannot write output report\n")
-        sys.exit()
+    mdString += '\nReport generated: ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n'
+    mdString += '\nInput file: ' + fileEcResults + '\n'
+
 
     # Read CSV to Data Frame
     epubsAll = pd.read_csv(fileEcResults, index_col=0, encoding="utf-8")
@@ -317,13 +312,27 @@ def main():
     mdString += dfToMarkdown(epubsWithWClt1000.describe())
 
     mdString += '\n'
-    # Write Markdown report and close it
+    # Write Markdown report
+
+    # Open output report (Markdown format) for writing
+    try:
+        reportMD = os.path.join(dirOut, 'report.md')
+        fOut = codecs.open(reportMD, "w", "utf-8")
+    except:
+        sys.stderr.write("Cannot write output report\n")
+        sys.exit()
+
     fOut.write(mdString)
     fOut.close()
 
     # Convert report to html
-    reportHTML = os.path.join(dirOut, 'report.html')
-    fHTML = codecs.open(reportHTML, 'w', 'utf-8')
+
+    try:
+        reportHTML = os.path.join(dirOut, 'report.html')
+        fHTML = codecs.open(reportHTML, 'w', 'utf-8')
+    except:
+        sys.stderr.write("Cannot write HTML report\n")
+        sys.exit()
 
     fHTML.write("""<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
