@@ -54,3 +54,7 @@ Errors and warnings are reported as codes; the meaning of these codes can be fou
     ./ebooks-test/test/epub20_xpgt.epub,2.0.1,Well-formed,0,0,,,748
     ./ebooks-test/test/epub20__invalid_entity.epub,2.0.1,Not well-formed,2,0,RSC-005 RSC-012,,0
     ./ebooks-test/test/epub30_font_obfuscation.epub,3.0.1,Well-formed,0,0,,,4652
+
+## License
+
+[github-markdown-css](https://github.com/sindresorhus/github-markdown-css) by [Sindre Sorhus](https://sindresorhus.com/), released under the MIT license.

@@ -2,6 +2,7 @@
 
 import sys
 import os
+import shutil
 import urllib.request
 import codecs
 import datetime
@@ -9,6 +10,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.pylab as pylab
+import markdown
 from tabulate import tabulate
 
 """
@@ -44,14 +46,28 @@ def main():
     if not os.path.isdir(dirOut):
         os.makedirs(dirOut)
 
+    dirCSS = os.path.join(dirOut, 'css')
     dirCSV = os.path.join(dirOut, 'csv')
     dirImg = os.path.join(dirOut, 'img')
+
+    if not os.path.isdir(dirCSS):
+        os.makedirs(dirCSS)
 
     if not os.path.isdir(dirCSV):
         os.makedirs(dirCSV)
 
+
     if not os.path.isdir(dirImg):
         os.makedirs(dirImg)
+
+    # Copy style sheet to CSS dir
+    try:
+        cssIn = os.path.join(sys.path[0], 'css', 'github-markdown.css')
+        cssOut = os.path.join(dirCSS, 'github-markdown.css')
+        shutil.copyfile(cssIn, cssOut)
+    except:
+        sys.stderr.write("Cannot copy style sheet\n")
+        sys.exit()
 
     # Download Epubcheck MessageBundle.properties file
     try:        
@@ -74,13 +90,15 @@ def main():
             desc = lineSplit[1]
             messageLookup[code] = desc
 
-    # Open output report for writing
+    # Open output report (Markdown format) for writing
     try:
-        fOut = codecs.open(os.path.join(dirOut, 'report.md'), "w", "utf-8")
-        fOut.write('# EPUB analysis report\n')
+        reportMD = os.path.join(dirOut, 'report.md')
+        fOut = codecs.open(reportMD, "w", "utf-8")
+        mdString = ''
+        mdString += '# EPUB analysis report\n'
 
-        fOut.write('\nReport generated: ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n')
-        fOut.write('\nInput file: ' + fileEcResults + '\n')
+        mdString += '\nReport generated: ' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '\n'
+        mdString += '\nInput file: ' + fileEcResults + '\n'
     except:
         sys.stderr.write("Cannot write output report\n")
         sys.exit()
@@ -158,8 +176,8 @@ def main():
 
     headers = ['', 'Count', '% of all EPUBs']
 
-    fOut.write('\n\n## Summary\n\n')
-    fOut.write(tabulate(summaryTable, headers, tablefmt='pipe'))
+    mdString += '\n\n## Summary\n\n'
+    mdString += tabulate(summaryTable, headers, tablefmt='pipe')
 
     # Create table with links to generated CSV files
     csvTable = [
@@ -170,8 +188,8 @@ def main():
 
     headers = ['', 'File']
 
-    fOut.write('\n\n## CSV subsets\n\n')
-    fOut.write(tabulate(csvTable, headers, tablefmt='pipe'))
+    mdString += '\n\n## CSV subsets\n\n'
+    mdString += tabulate(csvTable, headers, tablefmt='pipe')
 
     # Frequency of EPUB versions
     epubVCounts = epubsAll['epubVersion'].value_counts().to_frame()
@@ -184,8 +202,8 @@ def main():
     
     epubVCounts.insert(1, '%', versionRelFrequencies)
 
-    fOut.write('\n\n## EPUB versions\n\n')
-    fOut.write(dfToMarkdown(epubVCounts,['epubVersion', 'Count', '% of all EPUBs']))
+    mdString += '\n\n## EPUB versions\n\n'
+    mdString += dfToMarkdown(epubVCounts,['epubVersion', 'Count', '% of all EPUBs'])
 
     # Frequency of errors
     errorCounts = errors.value_counts().to_frame(name="count")
@@ -214,13 +232,13 @@ def main():
     errorCounts.insert(0, 'description', errorDescriptions)
     errorCounts.insert(2, '%', errorRelFrequencies)
 
-    fOut.write('\n\n## Frequency of validation errors\n\n')
-    fOut.write(dfToMarkdown(errorCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
+    mdString += '\n\n## Frequency of validation errors\n\n'
+    mdString += dfToMarkdown(errorCounts,['Code', 'Description', 'Count', '% of all EPUBs'])
 
-    fOut.write('\n\n![](./img/errors.png)\n')
+    mdString += '\n\n![](./img/errors.png)\n'
 
-    fOut.write('\n\n## CSV subsets for each error\n\n')
-    fOut.write(tabulate(errorLinkTable, errorLinkheaders, tablefmt='pipe'))
+    mdString += '\n\n## CSV subsets for each error\n\n'
+    mdString += tabulate(errorLinkTable, errorLinkheaders, tablefmt='pipe')
 
     # Frequency of warnings
     warningCounts = warnings.value_counts().to_frame(name="count")
@@ -249,13 +267,13 @@ def main():
     warningCounts.insert(0, 'description', warningDescriptions)
     warningCounts.insert(2, '%', warningRelFrequencies)
 
-    fOut.write('\n\n## Frequency of validation warnings\n\n')
-    fOut.write(dfToMarkdown(warningCounts,['Code', 'Description', 'Count', '% of all EPUBs']))
+    mdString += '\n\n## Frequency of validation warnings\n\n'
+    mdString += dfToMarkdown(warningCounts,['Code', 'Description', 'Count', '% of all EPUBs'])
 
-    fOut.write('\n\n![](./img/warnings.png)\n')
+    mdString += '\n\n![](./img/warnings.png)\n'
 
-    fOut.write('\n\n## CSV subsets for each warning\n\n')
-    fOut.write(tabulate(warningLinkTable, warningLinkheaders, tablefmt='pipe'))
+    mdString += '\n\n## CSV subsets for each warning\n\n'
+    mdString += tabulate(warningLinkTable, warningLinkheaders, tablefmt='pipe')
 
     # Plots of errors and warnings
     ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
@@ -281,27 +299,70 @@ def main():
     fig.savefig(os.path.join(dirImg, 'warnings.png'))
 
     # Write detailed statistics
-    fOut.write('\n\n## Detailed statistics\n')
+    mdString += '\n\n## Detailed statistics\n'
 
-    fOut.write('\n\n### All EPUBs\n\n')
-    fOut.write(dfToMarkdown(epubsAll.describe()))
+    mdString += '\n\n### All EPUBs\n\n'
+    mdString += dfToMarkdown(epubsAll.describe())
 
-    fOut.write('\n\n### EPUBs with errors\n\n')
-    fOut.write(dfToMarkdown(epubsWithErrors.describe()))
+    mdString += '\n\n### EPUBs with errors\n\n'
+    mdString += dfToMarkdown(epubsWithErrors.describe())
 
-    fOut.write('\n\n### EPUBs with warnings\n\n')
-    fOut.write(dfToMarkdown(epubsWithWarnings.describe()))
+    mdString += '\n\n### EPUBs with warnings\n\n'
+    mdString += dfToMarkdown(epubsWithWarnings.describe())
 
-    fOut.write('\n\n### EPUBs with errors or warnings\n\n')
-    fOut.write(dfToMarkdown(epubsWithErrorsOrWarnings.describe()))
+    mdString += '\n\n### EPUBs with errors or warnings\n\n'
+    mdString += dfToMarkdown(epubsWithErrorsOrWarnings.describe())
 
-    fOut.write('\n\n### EPUBs with less than 1000 words\n\n')
-    fOut.write(dfToMarkdown(epubsWithWClt1000.describe()))
+    mdString += '\n\n### EPUBs with less than 1000 words\n\n'
+    mdString += dfToMarkdown(epubsWithWClt1000.describe())
 
-    fOut.write('\n')
-
-    # Close report
+    mdString += '\n'
+    # Write Markdown report and close it
+    fOut.write(mdString)
     fOut.close()
+
+    # Convert report to html
+    reportHTML = os.path.join(dirOut, 'report.html')
+    fHTML = codecs.open(reportHTML, 'w', 'utf-8')
+
+    fHTML.write("""<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+    <meta charset="utf-8" />
+    <title>Report</title>
+    <link rel="stylesheet" type="text/css" href="./css/github-markdown.css">
+    <style>
+	    .markdown-body {
+		    box-sizing: border-box;
+		    min-width: 200px;
+		    max-width: 980px;
+		    margin: 0 auto;
+		    padding: 45px;
+	    }
+
+	    @media (max-width: 767px) {
+		    .markdown-body {
+			    padding: 15px;
+		    }
+	    }
+    </style>
+</head>
+<body>
+<span class="markdown-body">\n""")
+
+    HTML = markdown.markdown(mdString,
+                                 output_format='html5',
+                                 output=fHTML,
+                                 encoding='utf-8',
+                                 extensions=['extra'])
+
+
+    fHTML.write(HTML)
+    fHTML.write("""\n</span>\n</body>\n</html>\n""")
+
+    fHTML.close()    
+
+  
 
 main()
 
