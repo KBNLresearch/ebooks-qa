@@ -8,6 +8,8 @@ import urllib.request
 import codecs
 import subprocess as sub
 import multiprocessing
+import csv
+from lxml import etree
 
 # Dependencies:
 #
@@ -51,8 +53,9 @@ def runEpubCheck(epub):
     args.append(''.join(['-jar']))
     args.append(''.join([epubcheckJar]))
     args.append(''.join([epub]))
+    args.append(''.join(['-q']))
     args.append(''.join(['--out']))
-    args.append(''.join(['tmp.xml']))
+    args.append(''.join(['-']))
     status, out, err = launchSubProcess(args)
     return status, out, err
 
@@ -61,7 +64,9 @@ def main():
     global epubcheckJar
     global tikaServerJar
     global tikaServerURL
-   
+
+    runTika = False
+
     # Location of EpubCheck Jar
     epubcheckJar = os.path.normpath('/home/johan/epubcheck/epubcheck.jar')
 
@@ -74,15 +79,34 @@ def main():
     # Defines no. of seconds script waits to allow the Tika server to initialise   
     sleepValue = 3
 
+    # Command line args
     rootDir = sys.argv[1]
     outFile = sys.argv[2]
 
-    # Launch Tika server as a sub process 
-    t1 = multiprocessing.Process(target=launchTikaServer)
-    t1.start()
+    # Open output CSV file
+    fOut = open(outFile, 'w', encoding='utf-8')
 
-    # Allow some time for the server to initialise
-    time.sleep(sleepValue)
+    # Create CSV writer object
+    csvOut = csv.writer(fOut, lineterminator='\n')
+
+    # Write header row
+ 
+    headerItems = ['fileName', 'identifier', 'title' ,'author', 'publisher', 'epubVersion', 'epubStatus', 'noErrors', 'noWarnings', 'errors', 'warnings', 'wordCount']
+    csvOut.writerow(headerItems)
+
+    # Configure XML parser
+    utf8_parser = etree.XMLParser(encoding='utf-8', remove_blank_text=True)
+
+    # Namespaces
+    NSMAP = {'j': 'http://hul.harvard.edu/ois/xml/ns/jhove'}
+
+    if runTika == True:
+        # Launch Tika server as a sub process 
+        t1 = multiprocessing.Process(target=launchTikaServer)
+        t1.start()
+
+        # Allow some time for the server to initialise
+        time.sleep(sleepValue)
 
     # Set up list that will contain all EPUBs
     epubs= []
@@ -100,20 +124,87 @@ def main():
                 epubs.append(filePath)
 
     for epub in epubs:
+        # Run Epubcheck
         ecStatus, ecOut, ecErr = runEpubCheck(epub)
-        print(str(ecStatus), ecErr)
+        # Parse output
+        ecOutUTF8 = ecOut.encode('utf-8')
+        ecRoot = etree.fromstring(ecOutUTF8, parser=utf8_parser)
 
-    t1.terminate()
-    t1.join()
-    #args = [config.dBpowerampConsoleRipExe]
-    #args.append("".join(["--drive=", config.cdDriveLetter]))
-    #args.append("".join(["--log=", logFile]))
-    #args.append("".join(["--path=", writeDirectory]))
+        # EPUB version
+        epubVersions = ecRoot.xpath('//j:jhove/j:repInfo/j:version',
+                                   namespaces=NSMAP)
 
-    # Command line as string (used for logging purposes only)
-    #cmdStr = " ".join(args)
+        # Validation status
+        epubStatuses = ecRoot.xpath('//j:jhove/j:repInfo/j:status',
+                                   namespaces=NSMAP)
 
-    #status, out, err = shared.launchSubProcess(args)
+        # Error codes
+        epubErrors = ecRoot.xpath('//j:jhove/j:repInfo/j:messages/j:message[contains(.,"ERROR")]/@subMessage',
+                                   namespaces=NSMAP)
+
+        # Warning codes
+        epubWarnings = ecRoot.xpath('//j:jhove/j:repInfo/j:messages/j:message[contains(.,"WARN")]/@subMessage',
+                                   namespaces=NSMAP)
+
+        # Unique error and warning codes
+        epubErrorsUnique = list(set(epubErrors))
+        epubWarningsUnique = list(set(epubWarnings))
+
+        # Number of unique error and warning codes
+        noErrors = len (epubErrorsUnique)
+        noWarnings = len(epubWarningsUnique)
+
+        # Create space-separated strings of unique errors / warnings
+        errors = ' '.join(epubErrorsUnique)
+        warnings = ' '.join(epubWarningsUnique)
+
+        # Extract identifier, title, author and publisher names
+        identifiers = ecRoot.xpath("//j:jhove/j:repInfo/j:properties/j:property[j:name='Info']/j:values/j:property[j:name='Identifier']/j:values/j:value")
+        titles = ecRoot.xpath("//j:jhove/j:repInfo/j:properties/j:property[j:name='Info']/j:values/j:property[j:name='Title']/j:values/j:value")
+        authors = ecRoot.xpath("//j:jhove/j:repInfo/j:properties/j:property[j:name='Info']/j:values/j:property[j:name='Creator']/j:values/j:value")
+        publishers = ecRoot.xpath("//j:jhove/j:repInfo/j:properties/j:property[j:name='Info']/j:values/j:property[j:name='Publisher']/j:values/j:value")
+
+        if len(epubVersions) != 0:
+            epubVersion = epubVersions[0].text
+        else:
+            epubVersion = ''
+
+        if len(epubStatuses) != 0:
+            epubStatus = epubStatuses[0].text
+        else:
+            epubStatus = ''
+
+        if len(identifiers) != 0:
+            identifier = identifiers[0].text
+        else:
+            identifier = ''
+
+        if len(titles) != 0:
+            title = titles[0].text
+        else:
+            title = ''
+
+        if len(authors) != 0:
+            author = authors[0].text
+        else:
+            author = ''
+
+        if len(publishers) != 0:
+            publisher = publishers[0].text
+        else:
+            publisher = ''
+
+        # Put all items that are to be written to a list and write row
+        rowItems = [epub, identifier, title , author, publisher, epubVersion, epubStatus, noErrors, noWarnings, errors, warnings, 0]
+        csvOut.writerow(rowItems)
+
+    # Close output file
+    fOut.close()
+
+
+    if runTika == True:
+        t1.terminate()
+        t1.join()
 
 main()
 
