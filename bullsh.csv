@@ -1,0 +1,16 @@
+fileName,identifier,title,author,publisher,epubVersion,epubStatus,noErrors,noWarnings,errors,warnings,wordCount
+"/media/johan/Elements1/ebooks-test/test/epub20 spaces, and comma in name.epub",urn:uuid:65df5593-b4ab-4d06-9fb4-bb9916eb99e6,Crazy Columns,Johan van der Knijff,,2.0.1,Well-formed,0,1,,CSS-017,0
+/media/johan/Elements1/ebooks-test/test/epub20_compressed_mimetype.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Well-formed,0,0,,,0
+/media/johan/Elements1/ebooks-test/test/epub20_crazy_columns.epub,urn:uuid:65df5593-b4ab-4d06-9fb4-bb9916eb99e6,Crazy Columns,Johan van der Knijff,,2.0.1,Well-formed,0,1,,CSS-017,0
+/media/johan/Elements1/ebooks-test/test/epub20_crazy_fixed_layout.epub,urn:uuid:65df5593-b4ab-4d06-9fb4-bb9916eb99e6,Crazy Fixed Layout,Johan van der Knijff,,2.0.1,Well-formed,0,1,,CSS-017,0
+/media/johan/Elements1/ebooks-test/test/epub20_dtbook.epub,C00000,Valentin Haüy - the father of the education for the blind,Beatrice Christensen Sköld,TPB,2.0.1,Well-formed,0,0,,,0
+/media/johan/Elements1/ebooks-test/test/epub20_encryption_binary_content.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Not well-formed,2,1,RSC-012 RSC-004,HTM-023,0
+/media/johan/Elements1/ebooks-test/test/epub20_foreign_resource_no_fallback.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Not well-formed,1,0,MED-003,,0
+/media/johan/Elements1/ebooks-test/test/epub20_foreign_resource_with_fallback.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Well-formed,0,0,,,0
+/media/johan/Elements1/ebooks-test/test/epub20_foreign_resource_with_fallback_noID.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Well-formed,0,0,,,0
+/media/johan/Elements1/ebooks-test/test/epub20_minimal.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Well-formed,0,0,,,0
+/media/johan/Elements1/ebooks-test/test/epub20_minimal_encryption.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Not well-formed,2,0,RSC-012 RSC-004,,0
+/media/johan/Elements1/ebooks-test/test/epub20_missingfontresource.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Not well-formed,1,0,RSC-007,,0
+/media/johan/Elements1/ebooks-test/test/epub20_xpgt.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Well-formed,0,0,,,0
+/media/johan/Elements1/ebooks-test/test/epub20__invalid_entity.epub,urn:uuid:f930f4b3-cba2-42ba-ab26-d49438ab00d6,When (not) to migrate a PDF to PDF/A,Johan van der Knijff,,2.0.1,Not well-formed,2,0,RSC-005 RSC-012,,0
+/media/johan/Elements1/ebooks-test/test/epub30_font_obfuscation.epub,code.google.com.epub-samples.wasteland-otf-obfuscated,The Waste Land,T.S. Eliot,,3.0.1,Well-formed,0,0,,,0
