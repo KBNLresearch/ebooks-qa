@@ -4,11 +4,11 @@ import sys
 import os
 import shutil
 import time
-import urllib.request
 import codecs
 import subprocess as sub
 import multiprocessing
 import csv
+import requests
 from lxml import etree
 
 # Dependencies:
@@ -65,7 +65,7 @@ def main():
     global tikaServerJar
     global tikaServerURL
 
-    runTika = False
+    runTika = True
 
     # Location of EpubCheck Jar
     epubcheckJar = os.path.normpath('/home/johan/epubcheck/epubcheck.jar')
@@ -198,6 +198,18 @@ def main():
         else:
             publisher = ''
 
+        # Submit file to Tika server, extract text and count number of words
+        #wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
+        #tikaURL = 
+        #tikaResponse = urllib.request.urlopen(inURL)
+
+        # Submit file to Tika server,
+        url = tikaServerURL + 'tika'
+        payload = open(os.path.normpath(epub), 'rb')
+        headers = {'Content-type': 'application/epub+zip'}
+        r = requests.put(url, data=payload, headers=headers)
+        print(r.text)
+
         # Put all items that are to be written to a list and write row
         rowItems = [epub, identifier, title , author, publisher, epubVersion, epubStatus, noErrors, noWarnings, errors, warnings, 0]
         csvOut.writerow(rowItems)
@@ -205,6 +217,7 @@ def main():
     # Close output file
     fOut.close()
 
+    # TODO: kill Tika process (how?)
 
     if runTika == True:
         t1.terminate()
