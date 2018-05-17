@@ -51,7 +51,7 @@ Here *inputFile* is the CSV file produced by *extract.py*, and *dirOut* is the n
 ## Output
 
 - **report.md**: report in Markdown format
-- ** report.html**: report in HTML format
+- **report.html**: report in HTML format
 - **csv**: directory with CSV files (description can be found in the report, which also links to these files)
 
 ## License
