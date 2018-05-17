@@ -208,10 +208,11 @@ def main():
         payload = open(os.path.normpath(epub), 'rb')
         headers = {'Content-type': 'application/epub+zip'}
         r = requests.put(url, data=payload, headers=headers)
-        print(r.text)
+        extractedText = r.text.strip()
+        noWords = len(extractedText.split(' '))
 
         # Put all items that are to be written to a list and write row
-        rowItems = [epub, identifier, title , author, publisher, epubVersion, epubStatus, noErrors, noWarnings, errors, warnings, 0]
+        rowItems = [epub, identifier, title , author, publisher, epubVersion, epubStatus, noErrors, noWarnings, errors, warnings, noWords]
         csvOut.writerow(rowItems)
 
     # Close output file
