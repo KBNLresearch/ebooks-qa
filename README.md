@@ -1,31 +1,34 @@
 # About this repo
 
-This repo contains scripts and resources for automated quality assessement of e-books (for now only EPUB; PDF may follow later).
+This repo contains scripts and resources for automated quality assessement of e-books (for now only EPUB; PDF may follow later). Scripts require Python 3.x and do *not* work with Python 2.x!
 
 ## Dependencies
 
 - java
 - [Epubcheck](https://github.com/IDPF/epubcheck) (tested with v. 4.0.2)
 - [Apache Tika](https://tika.apache.org)'s *tika-server* JAR (available for download at <https://tika.apache.org/download.html>)
-- xmlstarlet
-- curl (installed by default on most Unix systems)
-- wc (installed by default on most Unix systems)
 
-## ebooksqa.sh
+Note that for now the locations to the Epubcheck and Tika JAR files are hard-coded in the Python scripts.
+
+## extract.py
 
 This script recursively walks through a directory tree, and runs Epubcheck for each EPUB file (identified by its file extension). It then extracts all validation error and warning codes, removing duplicate codes, and writes them to a comma-delimited text file. Note that the script only reports on *unique* errors and warnings. For example, if an EPUB contains multiple missing referenced resources (error code `RSC-007`), any duplicate instances are removed.
 
-The script also reports a word count for each file. This is a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
+The script also reports some basic metadata (identifier, author, title, publisher) and a word count for each file. The word count a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
 
 ### Usage
 
-    ebooksqa.sh rootDirectory prefixOut
+    python3 extract.py rootDir outCSV
 
 ### Output
 
-Comma-delimited text file (`$prefixOut.csv`) with for each EPUB the following columns:
+Comma-delimited text file, with for each EPUB the following columns:
 
 - **fileName**: full path to file
+- **identifier**: identifier
+- **title**: title
+- **author**: author name
+- **publisher**: publisher name
 - **epubVersion**: EPUB version string
 - **epubStatus**: EpubCheck validation outcome
 - **noErrors**: number of *unique* errors reported by EpubCheck
@@ -37,23 +40,19 @@ Comma-delimited text file (`$prefixOut.csv`) with for each EPUB the following co
 Errors and warnings are reported as codes; the meaning of these codes can be found in EpubCheck's [default MessageBundle.properties file
 ](https://github.com/IDPF/epubcheck/blob/master/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties).
 
+## report.py
 
-### Example output
+### Usage
 
-    fileName,epubVersion,epubStatus,noErrors,noWarnings,errors,warnings,wordCount
-    ./ebooks-test/test/epub20_crazy_columns.epub,2.0.1,Well-formed,0,1,,CSS-017,45
-    ./ebooks-test/test/epub20_crazy_fixed_layout.epub,2.0.1,Well-formed,0,1,,CSS-017,84
-    ./ebooks-test/test/epub20_dtbook.epub,2.0.1,Well-formed,0,0,,,0
-    ./ebooks-test/test/epub20_encryption_binary_content.epub,2.0.1,Not well-formed,2,1,RSC-004 RSC-012,HTM-023,0
-    ./ebooks-test/test/epub20_foreign_resource_no_fallback.epub,2.0.1,Not well-formed,1,0,MED-003,,748
-    ./ebooks-test/test/epub20_foreign_resource_with_fallback.epub,2.0.1,Well-formed,0,0,,,749
-    ./ebooks-test/test/epub20_foreign_resource_with_fallback_noID.epub,2.0.1,Well-formed,0,0,,,749
-    ./ebooks-test/test/epub20_minimal.epub,2.0.1,Well-formed,0,0,,,748
-    ./ebooks-test/test/epub20_minimal_encryption.epub,2.0.1,Not well-formed,2,0,RSC-004 RSC-012,,0
-    ./ebooks-test/test/epub20_missingfontresource.epub,2.0.1,Not well-formed,1,0,RSC-007,,748
-    ./ebooks-test/test/epub20_xpgt.epub,2.0.1,Well-formed,0,0,,,748
-    ./ebooks-test/test/epub20__invalid_entity.epub,2.0.1,Not well-formed,2,0,RSC-005 RSC-012,,0
-    ./ebooks-test/test/epub30_font_obfuscation.epub,3.0.1,Well-formed,0,0,,,4652
+    python3 report.py inputFile dirOut
+
+Here *inputFile* is the CSV file produced by *extract.py*, and *dirOut* is the name of a directory where all output is written.
+
+## Output
+
+- **report.md**: report in Markdown format
+- ** report.html**: report in HTML format
+- **csv**: directory with CSV files (description can be found in the report, which also links to these files)
 
 ## License
 

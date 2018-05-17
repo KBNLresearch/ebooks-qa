@@ -33,7 +33,7 @@ def dfToMarkdown(dataframe, headers='keys'):
 
 def main():
     if len(sys.argv) < 3:
-        sys.stderr.write("USAGE: analysis.py <inputFile> <dirOut>\n")
+        sys.stderr.write("USAGE: report.py <inputFile> <dirOut>\n")
         sys.exit()
     else:
         fileEcResults=sys.argv[1]

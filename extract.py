@@ -39,14 +39,14 @@ def launchSubProcess(args):
         outputAsString = ""
         errorsAsString = ""
 
-    return(exitStatus, outputAsString, errorsAsString)
+    return(p, exitStatus, outputAsString, errorsAsString)
 
 
 def launchTikaServer():
     args = ['java']
     args.append(''.join(['-jar']))
     args.append(''.join([tikaServerJar]))
-    status, out, err = launchSubProcess(args)
+    p, status, out, err = launchSubProcess(args)
 
 def runEpubCheck(epub):
     args = ['java']
@@ -56,8 +56,8 @@ def runEpubCheck(epub):
     args.append(''.join(['-q']))
     args.append(''.join(['--out']))
     args.append(''.join(['-']))
-    status, out, err = launchSubProcess(args)
-    return status, out, err
+    p, status, out, err = launchSubProcess(args)
+    return p, status, out, err
 
 def main():
 
@@ -65,7 +65,13 @@ def main():
     global tikaServerJar
     global tikaServerURL
 
-    runTika = True
+    if len(sys.argv) < 3:
+        sys.stderr.write("USAGE: extract.py <rootDir> <outCSV>\n")
+        sys.exit()
+    else:
+        # Command line args
+        rootDir = sys.argv[1]
+        outFile = sys.argv[2]
 
     # Location of EpubCheck Jar
     epubcheckJar = os.path.normpath('/home/johan/epubcheck/epubcheck.jar')
@@ -78,10 +84,6 @@ def main():
 
     # Defines no. of seconds script waits to allow the Tika server to initialise   
     sleepValue = 3
-
-    # Command line args
-    rootDir = sys.argv[1]
-    outFile = sys.argv[2]
 
     # Open output CSV file
     fOut = open(outFile, 'w', encoding='utf-8')
@@ -100,13 +102,12 @@ def main():
     # Namespaces
     NSMAP = {'j': 'http://hul.harvard.edu/ois/xml/ns/jhove'}
 
-    if runTika == True:
-        # Launch Tika server as a sub process 
-        t1 = multiprocessing.Process(target=launchTikaServer)
-        t1.start()
+    # Launch Tika server as a sub process 
+    t1 = multiprocessing.Process(target=launchTikaServer)
+    t1.start()
 
-        # Allow some time for the server to initialise
-        time.sleep(sleepValue)
+    # Allow some time for the server to initialise
+    time.sleep(sleepValue)
 
     # Set up list that will contain all EPUBs
     epubs= []
@@ -125,7 +126,7 @@ def main():
 
     for epub in epubs:
         # Run Epubcheck
-        ecStatus, ecOut, ecErr = runEpubCheck(epub)
+        ecP, ecStatus, ecOut, ecErr = runEpubCheck(epub)
         # Parse output
         ecOutUTF8 = ecOut.encode('utf-8')
         ecRoot = etree.fromstring(ecOutUTF8, parser=utf8_parser)
@@ -220,9 +221,8 @@ def main():
 
     # TODO: kill Tika process (how?)
 
-    if runTika == True:
-        t1.terminate()
-        t1.join()
+    t1.terminate()
+    t1.join()
 
 main()
 
