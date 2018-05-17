@@ -199,18 +199,15 @@ def main():
         else:
             publisher = ''
 
-        # Submit file to Tika server, extract text and count number of words
-        #wordCount=$(curl -T "$file" "$tikaServerURL"tika --header "Accept: text/plain" 2>> $tikaExtractErr | wc -w)
-        #tikaURL = 
-        #tikaResponse = urllib.request.urlopen(inURL)
-
         # Submit file to Tika server,
         url = tikaServerURL + 'tika'
         payload = open(os.path.normpath(epub), 'rb')
         headers = {'Content-type': 'application/epub+zip'}
         r = requests.put(url, data=payload, headers=headers)
+
+        # Strip leading/trailing whitespace and count words
         extractedText = r.text.strip()
-        noWords = len(extractedText.split(' '))
+        noWords = len(extractedText.split())
 
         # Put all items that are to be written to a list and write row
         rowItems = [epub, identifier, title , author, publisher, epubVersion, epubStatus, noErrors, noWarnings, errors, warnings, noWords]
