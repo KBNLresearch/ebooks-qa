@@ -159,13 +159,13 @@ def main():
         warnings = ' '.join(epubWarningsUnique)
 
         # Extract identifier, title, author and publisher names
-        identifiers = ecRoot.xpath("//j:jhove/j:repInfo/j:properties/j:property[j:name='Info']/j:values/j:property[j:name='Identifier']/j:values/j:value",
+        identifiers = ecRoot.xpath('//j:jhove/j:repInfo/j:properties/j:property[j:name="Info"]/j:values/j:property[j:name="Identifier"]/j:values/j:value',
                                    namespaces=NSMAP)
-        titles = ecRoot.xpath("//j:jhove/j:repInfo/j:properties/j:property[j:name='Info']/j:values/j:property[j:name='Title']/j:values/j:value",
+        titles = ecRoot.xpath('//j:jhove/j:repInfo/j:properties/j:property[j:name="Info"]/j:values/j:property[j:name="Title"]/j:values/j:value',
                                    namespaces=NSMAP)
-        authors = ecRoot.xpath("//j:jhove/j:repInfo/j:properties/j:property[j:name='Info']/j:values/j:property[j:name='Creator']/j:values/j:value",
+        authors = ecRoot.xpath('//j:jhove/j:repInfo/j:properties/j:property[j:name="Info"]/j:values/j:property[j:name="Creator"]/j:values/j:value',
                                    namespaces=NSMAP)
-        publishers = ecRoot.xpath("//j:jhove/j:repInfo/j:properties/j:property[j:name='Info']/j:values/j:property[j:name='Publisher']/j:values/j:value",
+        publishers = ecRoot.xpath('//j:jhove/j:repInfo/j:properties/j:property[j:name="Info"]/j:values/j:property[j:name="Publisher"]/j:values/j:value',
                                    namespaces=NSMAP)
 
         if len(epubVersions) != 0:
