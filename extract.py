@@ -5,8 +5,9 @@ import os
 import shutil
 import time
 import codecs
-import subprocess as sub
 import multiprocessing
+import subprocess as sub
+import psutil
 import csv
 import requests
 from lxml import etree
@@ -42,11 +43,20 @@ def launchSubProcess(args):
     return(p, exitStatus, outputAsString, errorsAsString)
 
 
+def kill(proc_pid):
+    """Kill subprocess, source https://stackoverflow.com/a/25134985/1209004"""
+    process = psutil.Process(proc_pid)
+    for proc in process.children(recursive=True):
+        proc.kill()
+    process.kill()
+
+
 def launchTikaServer():
     args = ['java']
     args.append(''.join(['-jar']))
     args.append(''.join([tikaServerJar]))
     p, status, out, err = launchSubProcess(args)
+
 
 def runEpubCheck(epub):
     args = ['java']
@@ -58,6 +68,7 @@ def runEpubCheck(epub):
     args.append(''.join(['-']))
     p, status, out, err = launchSubProcess(args)
     return p, status, out, err
+
 
 def main():
 
@@ -216,9 +227,8 @@ def main():
     # Close output file
     fOut.close()
 
-    # TODO: kill Tika process (how?)
-
-    t1.terminate()
+    # Kill Tika process
+    kill(t1.pid)
     t1.join()
 
 main()
