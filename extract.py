@@ -76,13 +76,14 @@ def main():
     global tikaServerJar
     global tikaServerURL
 
-    if len(sys.argv) < 3:
-        sys.stderr.write("USAGE: extract.py <rootDir> <outCSV>\n")
+    if len(sys.argv) < 4:
+        sys.stderr.write("USAGE: extract.py <rootDir> <outCSV> <outErr>\n")
         sys.exit()
     else:
         # Command line args
         rootDir = sys.argv[1]
         outFile = sys.argv[2]
+        errFile = sys.argv[3]
 
     # Location of EpubCheck Jar
     epubcheckJar = os.path.normpath('/home/johan/epubcheck/epubcheck.jar')
@@ -98,6 +99,9 @@ def main():
 
     # Open output CSV file
     fOut = open(outFile, 'w', encoding='utf-8')
+
+    # Open error file
+    fErr = open(errFile, 'w', encoding='utf-8')
 
     # Create CSV writer object
     csvOut = csv.writer(fOut, lineterminator='\n')
@@ -224,8 +228,15 @@ def main():
         rowItems = [epub, identifier, title , author, publisher, epubVersion, epubStatus, noErrors, noWarnings, errors, warnings, noWords]
         csvOut.writerow(rowItems)
 
+        # Write error file
+        fErr.write('****\n')
+        fErr.write(epub + '\n')
+        fErr.write(ecOut + '\n')
+        fErr.write(ecErr + '\n')
+
     # Close output file
     fOut.close()
+    fErr.close()
 
     # Kill Tika process
     kill(t1.pid)
