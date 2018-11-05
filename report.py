@@ -202,73 +202,75 @@ def main():
 
     # Frequency of errors
     errorCounts = errors.value_counts().to_frame(name="count")
+    
+    if not errorCounts.empty:
+        # Insert columns with error descriptions and relative frequencies
+        # also report CSV file of all EPUBs for each error code
+        errorDescriptions = []
+        errorRelFrequencies = []
+        errorLinkTable = []
+        errorLinkheaders = ['Code', 'File']
 
-    # Insert columns with error descriptions and relative frequencies
-    # also report CSV file of all EPUBs for each error code
-    errorDescriptions = []
-    errorRelFrequencies = []
-    errorLinkTable = []
-    errorLinkheaders = ['Code', 'File']
+        for i, row in errorCounts.iterrows():
+            description = messageLookup.get(i, "n/a")
+            errorDescriptions.append(description)
 
-    for i, row in errorCounts.iterrows():
-        description = messageLookup.get(i, "n/a")
-        errorDescriptions.append(description)
+            relFrequency = 100*row["count"]/noEpubs
+            errorRelFrequencies.append(round(relFrequency, 2))
 
-        relFrequency = 100*row["count"]/noEpubs
-        errorRelFrequencies.append(round(relFrequency, 2))
+            # Select all corresponding records with this error and write to CSV
+            records = epubsWithErrors[epubsWithErrors['errors'].str.contains(str(i))]
+            fName = 'error-' + str(i) + '.csv'
+            records.to_csv(os.path.join(dirCSV, fName), encoding='utf-8')
+            # Add link to link table
+            errorLinkTable.append([str(i), '[' + fName + '](' + './csv/' + fName + ')'])
 
-        # Select all corresponding records with this error and write to CSV
-        records = epubsWithErrors[epubsWithErrors['errors'].str.contains(str(i))]
-        fName = 'error-' + str(i) + '.csv'
-        records.to_csv(os.path.join(dirCSV, fName), encoding='utf-8')
-        # Add link to link table
-        errorLinkTable.append([str(i), '[' + fName + '](' + './csv/' + fName + ')'])
+        errorCounts.insert(0, 'description', errorDescriptions)
+        errorCounts.insert(2, '%', errorRelFrequencies)
 
-    errorCounts.insert(0, 'description', errorDescriptions)
-    errorCounts.insert(2, '%', errorRelFrequencies)
+        mdString += '\n\n## Frequency of validation errors\n\n'
+        mdString += dfToMarkdown(errorCounts,['Code', 'Description', 'Count', '% of all EPUBs'])
 
-    mdString += '\n\n## Frequency of validation errors\n\n'
-    mdString += dfToMarkdown(errorCounts,['Code', 'Description', 'Count', '% of all EPUBs'])
+        mdString += '\n\n![](./img/errors.png)\n'
 
-    mdString += '\n\n![](./img/errors.png)\n'
-
-    mdString += '\n\n## CSV subsets for each error\n\n'
-    mdString += tabulate(errorLinkTable, errorLinkheaders, tablefmt='pipe')
+        mdString += '\n\n## CSV subsets for each error\n\n'
+        mdString += tabulate(errorLinkTable, errorLinkheaders, tablefmt='pipe')
 
     # Frequency of warnings
     warningCounts = warnings.value_counts().to_frame(name="count")
 
-    # Insert columns with warning descriptions and relative frequencies
-    # also report CSV file of all EPUBs for each warning code
-    warningDescriptions = []
-    warningRelFrequencies = []
-    warningLinkTable = []
-    warningLinkheaders = ['Code', 'File']
+    if not warningCounts.empty:
+        # Insert columns with warning descriptions and relative frequencies
+        # also report CSV file of all EPUBs for each warning code
+        warningDescriptions = []
+        warningRelFrequencies = []
+        warningLinkTable = []
+        warningLinkheaders = ['Code', 'File']
 
-    for i, row in warningCounts.iterrows():
-        description = messageLookup.get(i, "n/a")
-        warningDescriptions.append(description)
+        for i, row in warningCounts.iterrows():
+            description = messageLookup.get(i, "n/a")
+            warningDescriptions.append(description)
 
-        relFrequency = 100*row["count"]/noEpubs
-        warningRelFrequencies.append(round(relFrequency, 2))
+            relFrequency = 100*row["count"]/noEpubs
+            warningRelFrequencies.append(round(relFrequency, 2))
 
-        # Select all corresponding records with this warning and write to CSV
-        records = epubsWithWarnings[epubsWithWarnings['warnings'].str.contains(str(i))]
-        fName = 'warning-' + str(i) + '.csv'
-        records.to_csv(os.path.join(dirCSV, fName), encoding='utf-8')
-        # Add link to link table
-        warningLinkTable.append([str(i), '[' + fName + '](' + './csv/' + fName + ')'])
+            # Select all corresponding records with this warning and write to CSV
+            records = epubsWithWarnings[epubsWithWarnings['warnings'].str.contains(str(i))]
+            fName = 'warning-' + str(i) + '.csv'
+            records.to_csv(os.path.join(dirCSV, fName), encoding='utf-8')
+            # Add link to link table
+            warningLinkTable.append([str(i), '[' + fName + '](' + './csv/' + fName + ')'])
 
-    warningCounts.insert(0, 'description', warningDescriptions)
-    warningCounts.insert(2, '%', warningRelFrequencies)
+        warningCounts.insert(0, 'description', warningDescriptions)
+        warningCounts.insert(2, '%', warningRelFrequencies)
 
-    mdString += '\n\n## Frequency of validation warnings\n\n'
-    mdString += dfToMarkdown(warningCounts,['Code', 'Description', 'Count', '% of all EPUBs'])
+        mdString += '\n\n## Frequency of validation warnings\n\n'
+        mdString += dfToMarkdown(warningCounts,['Code', 'Description', 'Count', '% of all EPUBs'])
 
-    mdString += '\n\n![](./img/warnings.png)\n'
+        mdString += '\n\n![](./img/warnings.png)\n'
 
-    mdString += '\n\n## CSV subsets for each warning\n\n'
-    mdString += tabulate(warningLinkTable, warningLinkheaders, tablefmt='pipe')
+        mdString += '\n\n## CSV subsets for each warning\n\n'
+        mdString += tabulate(warningLinkTable, warningLinkheaders, tablefmt='pipe')
 
     if not errorCounts.empty:
         # Plot of errors
