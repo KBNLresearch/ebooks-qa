@@ -270,28 +270,31 @@ def main():
     mdString += '\n\n## CSV subsets for each warning\n\n'
     mdString += tabulate(warningLinkTable, warningLinkheaders, tablefmt='pipe')
 
-    # Plots of errors and warnings
-    ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
-                                                      y='count',
-                                                      lw=2.5,
-                                                      figsize=(8,8))
-
-    ecPlot.set_xlabel('Count')
-    ecPlot.set_ylabel('Error') 
-
-    fig = ecPlot.get_figure()
-    fig.savefig(os.path.join(dirImg, 'errors.png'))
-
-    wcPlot = warningCounts.sort_values(by="count").plot(kind='barh',
+    if not errorCounts.empty:
+        # Plot of errors
+        ecPlot = errorCounts.sort_values(by="count").plot(kind='barh',
                                                         y='count',
                                                         lw=2.5,
                                                         figsize=(8,8))
 
-    wcPlot.set_xlabel('Count')
-    wcPlot.set_ylabel('Warning') 
-   
-    fig = wcPlot.get_figure()
-    fig.savefig(os.path.join(dirImg, 'warnings.png'))
+        ecPlot.set_xlabel('Count')
+        ecPlot.set_ylabel('Error') 
+
+        fig = ecPlot.get_figure()
+        fig.savefig(os.path.join(dirImg, 'errors.png'))
+
+    if not warningCounts.empty:
+        # Plot of warnings
+        wcPlot = warningCounts.sort_values(by="count").plot(kind='barh',
+                                                            y='count',
+                                                            lw=2.5,
+                                                            figsize=(8,8))
+
+        wcPlot.set_xlabel('Count')
+        wcPlot.set_ylabel('Warning') 
+    
+        fig = wcPlot.get_figure()
+        fig.savefig(os.path.join(dirImg, 'warnings.png'))
 
     # Write detailed statistics
     mdString += '\n\n## Detailed statistics\n'
