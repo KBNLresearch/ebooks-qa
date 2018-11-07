@@ -54,6 +54,10 @@ Here *inputFile* is the CSV file produced by *extract.py*, and *dirOut* is the n
 - **report.html**: report in HTML format
 - **csv**: directory with CSV files (description can be found in the report, which also links to these files)
 
+## run-ace.sh
+
+Runs DAISY Ace tool on all EPUBs in a directory.
+
 ## License
 
 [github-markdown-css](https://github.com/sindresorhus/github-markdown-css) by [Sindre Sorhus](https://sindresorhus.com/), released under the MIT license.
