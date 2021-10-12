@@ -115,7 +115,7 @@ def main():
     utf8_parser = etree.XMLParser(encoding='utf-8', remove_blank_text=True)
 
     # Namespaces
-    NSMAP = {'j': 'http://hul.harvard.edu/ois/xml/ns/jhove'}
+    NSMAP = {'j': 'http://schema.openpreservation.org/ois/xml/ns/jhove'}
 
     # Launch Tika server as a sub process 
     t1 = multiprocessing.Process(target=launchTikaServer)
