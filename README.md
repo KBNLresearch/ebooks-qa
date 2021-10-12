@@ -7,6 +7,8 @@ This repo contains scripts and resources for automated quality assessement of e-
 - java
 - [Epubcheck](https://github.com/IDPF/epubcheck) (tested with v. 4.0.2)
 - [Apache Tika](https://tika.apache.org)'s *tika-server* JAR (available for download at <https://tika.apache.org/download.html>)
+- pandas (pip install pandas)
+- matplotlib (pip install matplotlib)
 
 Note that for now the locations to the Epubcheck and Tika JAR files are hard-coded in the Python scripts.
 
@@ -17,12 +19,13 @@ This script recursively walks through a directory tree, and runs Epubcheck for e
 The script also reports some basic metadata (identifier, author, title, publisher) and a word count for each file. The word count a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
 
 ### Usage
-
-    python3 extract.py rootDir outCSV
+```
+python3 extract.py rootDir outCSV outErr
+```
 
 ### Output
 
-Comma-delimited text file, with for each EPUB the following columns:
+OutCSV is a comma-delimited text file, with for each EPUB the following columns:
 
 - **fileName**: full path to file
 - **identifier**: identifier
@@ -40,11 +43,15 @@ Comma-delimited text file, with for each EPUB the following columns:
 Errors and warnings are reported as codes; the meaning of these codes can be found in EpubCheck's [default MessageBundle.properties file
 ](https://github.com/IDPF/epubcheck/blob/master/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties).
 
+OutErr is a text file with the full Epubcheck output of all proceessed files (you don't typically need this, and it is reported for debugging only).
+
 ## report.py
 
 ### Usage
 
-    python3 report.py inputFile dirOut
+```
+python3 report.py inputFile dirOut
+```
 
 Here *inputFile* is the CSV file produced by *extract.py*, and *dirOut* is the name of a directory where all output is written.
 
