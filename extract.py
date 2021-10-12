@@ -155,11 +155,13 @@ def main():
                                    namespaces=NSMAP)
 
         # Error codes
-        epubErrors = ecRoot.xpath('//j:jhove/j:repInfo/j:messages/j:message[contains(.,"ERROR")]/@subMessage',
+        
+        epubErrors = ecRoot.xpath('//j:jhove/j:repInfo/j:messages/j:message[@severity="error"]/@id',
                                    namespaces=NSMAP)
 
         # Warning codes
-        epubWarnings = ecRoot.xpath('//j:jhove/j:repInfo/j:messages/j:message[contains(.,"WARN")]/@subMessage',
+
+        epubWarnings = ecRoot.xpath('//j:jhove/j:repInfo/j:messages/j:message[@severity="warning"]/@id',
                                    namespaces=NSMAP)
 
         # Unique error and warning codes
