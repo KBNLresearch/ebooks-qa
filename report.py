@@ -71,7 +71,7 @@ def main():
 
     # Download Epubcheck MessageBundle.properties file
     try:        
-        response = urllib.request.urlopen('https://raw.githubusercontent.com/IDPF/epubcheck/master/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties')
+        response = urllib.request.urlopen('https://raw.githubusercontent.com/w3c/epubcheck/master/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties')
         mbProperties = response.read().decode("utf-8", errors="ignore").split('\n')
 
     except:
