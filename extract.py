@@ -89,7 +89,7 @@ def main():
     epubcheckJar = os.path.normpath('/home/johan/epubcheck/epubcheck.jar')
 
     # Location of Tika server Jar
-    tikaServerJar = os.path.normpath('/home/johan/tika/tika-server-1.17.jar')
+    tikaServerJar = os.path.normpath('/home/johan/tika/tika-server-standard-2.1.0.jar')
 
     # Server URL
     tikaServerURL = 'http://localhost:9998/'
