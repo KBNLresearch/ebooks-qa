@@ -56,8 +56,7 @@ The script generates two output files (the names are based on the user-specified
     - **warnings**: space-delimited list of *unique* warnings reported by EpubCheck
     - **wordCount**: word count (based on extracted text with Apache Tika)
 
-    Errors and warnings are reported as codes; the meaning of these codes can be found in EpubCheck's [default MessageBundle.properties file
-    ](https://github.com/w3c/epubcheck/blob/main/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties).
+    Errors and warnings are reported as codes; the meaning of these codes can be found in EpubCheck's [default MessageBundle.properties file](https://github.com/w3c/epubcheck/blob/main/src/main/resources/com/adobe/epubcheck/messages/MessageBundle.properties).
 
 2. A text file (\$prefixOut_ec.txt) with the full Epubcheck output of all proceessed files.
 
