@@ -13,11 +13,12 @@ import requests
 from lxml import etree
 import tika
 from tika import parser
+import config
 
 # Dependencies:
 #
-# - java
-# - EpubCheck
+# - java (edit config.py to change location)
+# - EpubCheck (edit config.py to change location)
 
 def launchSubProcess(args):
     """Launch subprocess and return exit code, stdout and stderr"""
@@ -45,7 +46,7 @@ def launchSubProcess(args):
 
 
 def runEpubCheck(epub):
-    args = ['java']
+    args = [java]
     args.append(''.join(['-jar']))
     args.append(''.join([epubcheckJar]))
     args.append(''.join([epub]))
@@ -59,24 +60,34 @@ def runEpubCheck(epub):
 def main():
 
     global epubcheckJar
+    global java
 
-    if len(sys.argv) < 4:
-        sys.stderr.write("USAGE: extract.py <rootDir> <outCSV> <outErr>\n")
+    if len(sys.argv) < 3:
+        sys.stderr.write("USAGE: extract.py <rootDir> <prefixOut>\n")
         sys.exit()
     else:
         # Command line args
         rootDir = sys.argv[1]
-        outFile = sys.argv[2]
-        errFile = sys.argv[3]
+        prefixOut = sys.argv[2]
 
     # Location of EpubCheck Jar
-    epubcheckJar = os.path.normpath('/home/johan/epubcheck/epubcheck.jar')
+    epubcheckJar = os.path.expanduser(config.epubcheckJar)
+
+    # Java
+    if config.java == "":
+        java = "java"
+    else:
+        java = config.java
+
+    # Output files
+    outFile = prefixOut + ".csv"
+    ecFile = prefixOut + "_ec.txt"
 
     # Open output CSV file
     fOut = open(outFile, 'w', encoding='utf-8')
 
-    # Open error file
-    fErr = open(errFile, 'w', encoding='utf-8')
+    # Open file with full epubcheck output
+    fECFull = open(ecFile, 'w', encoding='utf-8')
 
     # Create CSV writer object
     csvOut = csv.writer(fOut, lineterminator='\n')
@@ -193,14 +204,14 @@ def main():
         rowItems = [epub, identifier, title , author, publisher, epubVersion, epubStatus, noErrors, noWarnings, errors, warnings, noWords]
         csvOut.writerow(rowItems)
 
-        # Write error file
-        fErr.write('****\n')
-        fErr.write(epub + '\n')
-        fErr.write(ecOut + '\n')
-        fErr.write(ecErr + '\n')
+        # Write full Epubcheck output for this file
+        fECFull.write('****\n')
+        fECFull.write(epub + '\n')
+        fECFull.write(ecOut + '\n')
+        fECFull.write(ecErr + '\n')
 
     # Close output file
     fOut.close()
-    fErr.close()
+    fECFull.close()
 
 main()
