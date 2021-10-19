@@ -6,12 +6,12 @@ This repo contains scripts and resources for automated quality assessement of e-
 
 - java
 - [Epubcheck](https://github.com/IDPF/epubcheck) (tested with v. 4.0.2)
-- [Apache Tika](https://tika.apache.org)'s *tika-server* JAR (available for download at <https://tika.apache.org/download.html>)
-- pandas (pip install pandas)
-- matplotlib (pip install matplotlib)
-- tabulate (pip install tabulate)
+- [tika-python](https://github.com/chrismattmann/tika-python) (`pip install tika`)
+- [pandas](https://pandas.pydata.org/) (`pip install pandas`)
+- [matplotlib](https://matplotlib.org/) (`pip install matplotlib`)
+- [python-tabulate](https://github.com/astanin/python-tabulate) (`pip install tabulate`)
 
-Note that for now the locations to the Epubcheck and Tika JAR files are hard-coded in the Python scripts.
+Note that for now the locations to the Epubcheck JAR file is hard-coded in the Python scripts.
 
 ## extract.py
 

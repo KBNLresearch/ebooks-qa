@@ -11,12 +11,13 @@ import psutil
 import csv
 import requests
 from lxml import etree
+import tika
+from tika import parser
 
 # Dependencies:
 #
 # - java
 # - EpubCheck
-# - tika-server (see link here: https://tika.apache.org/download.html)
 
 def launchSubProcess(args):
     """Launch subprocess and return exit code, stdout and stderr"""
@@ -43,21 +44,6 @@ def launchSubProcess(args):
     return(p, exitStatus, outputAsString, errorsAsString)
 
 
-def kill(proc_pid):
-    """Kill subprocess, source https://stackoverflow.com/a/25134985/1209004"""
-    process = psutil.Process(proc_pid)
-    for proc in process.children(recursive=True):
-        proc.kill()
-    process.kill()
-
-
-def launchTikaServer():
-    args = ['java']
-    args.append(''.join(['-jar']))
-    args.append(''.join([tikaServerJar]))
-    p, status, out, err = launchSubProcess(args)
-
-
 def runEpubCheck(epub):
     args = ['java']
     args.append(''.join(['-jar']))
@@ -73,8 +59,6 @@ def runEpubCheck(epub):
 def main():
 
     global epubcheckJar
-    global tikaServerJar
-    global tikaServerURL
 
     if len(sys.argv) < 4:
         sys.stderr.write("USAGE: extract.py <rootDir> <outCSV> <outErr>\n")
@@ -87,15 +71,6 @@ def main():
 
     # Location of EpubCheck Jar
     epubcheckJar = os.path.normpath('/home/johan/epubcheck/epubcheck.jar')
-
-    # Location of Tika server Jar
-    tikaServerJar = os.path.normpath('/home/johan/tika/tika-server-standard-2.1.0.jar')
-
-    # Server URL
-    tikaServerURL = 'http://localhost:9998/'
-
-    # Defines no. of seconds script waits to allow the Tika server to initialise   
-    sleepValue = 3
 
     # Open output CSV file
     fOut = open(outFile, 'w', encoding='utf-8')
@@ -116,13 +91,6 @@ def main():
 
     # Namespaces
     NSMAP = {'j': 'http://schema.openpreservation.org/ois/xml/ns/jhove'}
-
-    # Launch Tika server as a sub process 
-    t1 = multiprocessing.Process(target=launchTikaServer)
-    t1.start()
-
-    # Allow some time for the server to initialise
-    time.sleep(sleepValue)
 
     # Set up list that will contain all EPUBs
     epubs= []
@@ -216,14 +184,9 @@ def main():
         else:
             publisher = ''
 
-        # Submit file to Tika server,
-        url = tikaServerURL + 'tika'
-        payload = open(os.path.normpath(epub), 'rb')
-        headers = {'Content-type': 'application/epub+zip'}
-        r = requests.put(url, data=payload, headers=headers)
-
-        # Strip leading/trailing whitespace and count words
-        extractedText = r.text.strip()
+        # Extract text with Tika and count words
+        parsed = parser.from_file(os.path.normpath(epub))
+        extractedText = parsed["content"].strip()
         noWords = len(extractedText.split())
 
         # Put all items that are to be written to a list and write row
@@ -240,10 +203,4 @@ def main():
     fOut.close()
     fErr.close()
 
-    # Kill Tika process
-    kill(t1.pid)
-    t1.join()
-
 main()
-
-
