@@ -35,7 +35,7 @@ target
 build
 dist
 pyi-build
-__pycache__
+__pycache__/
 
 # Compiled Source #
 ###################
