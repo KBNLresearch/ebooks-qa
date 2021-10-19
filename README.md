@@ -5,7 +5,7 @@ This repo contains scripts and resources for automated quality assessement of e-
 ## Dependencies
 
 - java
-- [Epubcheck](https://github.com/IDPF/epubcheck) (tested with v. 4.0.2)
+- [Epubcheck](https://github.com/w3c/epubcheck) (tested with v. 4.0.2)
 - [tika-python](https://github.com/chrismattmann/tika-python) (`pip install tika`)
 - [pandas](https://pandas.pydata.org/) (`pip install pandas`)
 - [matplotlib](https://matplotlib.org/) (`pip install matplotlib`)
