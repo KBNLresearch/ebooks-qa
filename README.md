@@ -16,7 +16,7 @@ This repo contains scripts and resources for automated quality assessement of e-
 
 This script recursively walks through a directory tree, and runs Epubcheck for each EPUB file (identified by its file extension). It then extracts all validation error and warning codes, removing duplicate codes, and writes them to a comma-delimited text file. Note that the script only reports on *unique* errors and warnings. For example, if an EPUB contains multiple missing referenced resources (error code `RSC-007`), any duplicate instances are removed.
 
-The script also reports some basic metadata (identifier, author, title, publisher) and a word count for each file. The word count a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
+The script also reports some basic metadata (identifier, author, title, publisher) and a word count for each file. The word count can be a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
 
 ### Epubcheck and Java locations
 
