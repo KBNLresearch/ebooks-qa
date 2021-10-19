@@ -20,7 +20,7 @@ The script also reports some basic metadata (identifier, author, title, publishe
 
 ### Epubcheck and Java locations
 
-Since the script wraps around Java and Epubcheck, it needs to know the location of the Epubcheck JAR and Java. Both can be set in the `config.py` script:
+Since the script wraps around Java and Epubcheck, it needs to know the location of the Epubcheck JAR and Java. Both can be set in the `config.py` file:
 
 ```Python
 # Epubcheck JAR
