@@ -4,13 +4,11 @@ This repo contains scripts and resources for automated quality assessement of e-
 
 ## Dependencies
 
-- java
-- [Epubcheck](https://github.com/w3c/epubcheck) (tested with v. 4.2.6)
+- [Epubcheck Python wrapper](https://github.com/titusz/epubcheck) (`pip install epubcheck`) (tested with v. 4.2.6)
 - [tika-python](https://github.com/chrismattmann/tika-python) (`pip install tika`)
 - [pandas](https://pandas.pydata.org/) (`pip install pandas`)
 - [matplotlib](https://matplotlib.org/) (`pip install matplotlib`)
 - [python-tabulate](https://github.com/astanin/python-tabulate) (`pip install tabulate`)
-
 
 ## extract.py
 
@@ -18,19 +16,6 @@ This script recursively walks through a directory tree, and runs Epubcheck for e
 
 The script also reports some basic metadata (identifier, author, title, publisher) and a word count for each file. The word count can be a useful heuristic for identifying EPUBs that contain only images without any actual text (particularly common for illustrated childrens books of some publishers). For these books the word count is typically less than 1000.
 
-### Epubcheck and Java locations
-
-Since the script wraps around Java and Epubcheck, it needs to know the location of the Epubcheck JAR and Java. Both can be set in the `config.py` file:
-
-```Python
-# Epubcheck JAR
-epubcheckJar = "~/epubcheck/epubcheck.jar"
-
-# Java interpreter (leave empty to use default java interpreter)
-java = ""
-```
-
-By default the "java" variable is set to an empty string, in which case the script uses the default "java" command. This usually does the trick on Linux-based systems, but for Windows you may need to specify the full path to the "java" executable. 
 
 ### Usage
 ```
