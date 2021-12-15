@@ -2,59 +2,78 @@
 
 import sys
 import os
-import shutil
-import time
-import codecs
-import multiprocessing
-import subprocess as sub
-import psutil
+from epubcheck import EpubCheck
 import csv
-import requests
 from lxml import etree
-import tika
 from tika import parser
-import config
-
-# Dependencies:
-#
-# - java (edit config.py to change location)
-# - EpubCheck (edit config.py to change location)
-
-def launchSubProcess(args):
-    """Launch subprocess and return exit code, stdout and stderr"""
-    try:
-        # Execute command line; stdout + stderr redirected to objects
-        # 'output' and 'errors'.
-        # Setting shell=True avoids console window poppong up with pythonw
-        p = sub.Popen(args, stdout=sub.PIPE, stderr=sub.PIPE, shell=False)
-        output, errors = p.communicate()
-
-        # Decode to UTF8
-        outputAsString = output.decode('utf-8')
-        errorsAsString = errors.decode('utf-8')
-
-        exitStatus = p.returncode
-
-    except Exception:
-        # I don't even want to to start thinking how one might end up here ...
-
-        exitStatus = -99
-        outputAsString = ""
-        errorsAsString = ""
-
-    return(p, exitStatus, outputAsString, errorsAsString)
 
 
-def runEpubCheck(epub):
-    args = [java]
-    args.append(''.join(['-jar']))
-    args.append(''.join([epubcheckJar]))
-    args.append(''.join([epub]))
-    args.append(''.join(['-q']))
-    args.append(''.join(['--out']))
-    args.append(''.join(['-']))
-    p, status, out, err = launchSubProcess(args)
-    return p, status, out, err
+def validate(epub):
+        """Validate file with Epubcheck"""
+        ecOut = EpubCheck(epub)
+        ecOutMeta = ecOut.meta
+        ecOutMessages = ecOut.messages
+
+        # Dictionary for Epubcheck results 
+        ecResults = {}
+
+        ecResults['file'] = epub
+        ecResults['valid'] = ecOut.valid
+
+        # Metadata
+        meta = {}            
+
+        meta['publisher'] = ecOutMeta.publisher
+        meta['title'] = ecOutMeta.title
+        meta['creator'] = ecOutMeta.creator
+        meta['date'] = ecOutMeta.date
+        meta['subject'] = ecOutMeta.subject
+        meta['description'] = ecOutMeta.description
+        meta['rights'] = ecOutMeta.rights
+        meta['identifier'] = ecOutMeta.identifier
+        meta['language'] = ecOutMeta.language
+        meta['nSpines'] = ecOutMeta.nSpines
+        meta['checkSum'] = ecOutMeta.checkSum
+        meta['renditionLayout'] = ecOutMeta.renditionLayout
+        meta['renditionOrientation'] = ecOutMeta.renditionOrientation
+        meta['renditionSpread'] = ecOutMeta.renditionSpread
+        meta['ePubVersion'] = ecOutMeta.ePubVersion
+        meta['isScripted'] = ecOutMeta.isScripted
+        meta['hasFixedFormat'] = ecOutMeta.hasFixedFormat
+        meta['isBackwardCompatible'] = ecOutMeta.isBackwardCompatible
+        meta['hasAudio'] = ecOutMeta.hasAudio
+        meta['hasVideo'] = ecOutMeta.hasVideo
+        meta['charsCount'] = ecOutMeta.charsCount
+        meta['embeddedFonts'] = ecOutMeta.embeddedFonts
+        meta['refFonts'] = ecOutMeta.refFonts
+        meta['hasEncryption'] = ecOutMeta.hasEncryption
+        meta['hasSignatures'] = ecOutMeta.hasSignatures
+        meta['contributors'] = ecOutMeta.contributors
+
+        # Validation errors and warnings
+        errors = []
+        warnings = []
+        infos = []
+        for ecOutMessage in ecOutMessages:
+            message = {}
+            message['id'] = ecOutMessage.id
+            message['level'] = ecOutMessage.level
+            message['location'] = ecOutMessage.location
+            message['message'] = ecOutMessage.message
+            if ecOutMessage.level in ['ERROR', 'FATAL']:
+                errors.append(message)
+            elif ecOutMessage.level == 'WARNING':
+                warnings.append(message)
+            else:
+                infos.append(message)
+        
+        ecResults['valid'] = ecOut.valid
+        ecResults['meta'] = meta
+        ecResults['errors'] = errors
+        ecResults['warnings'] = warnings
+        ecResults['infos'] = infos
+
+        return ecResults
 
 
 def main():
@@ -69,15 +88,6 @@ def main():
         # Command line args
         rootDir = sys.argv[1]
         prefixOut = sys.argv[2]
-
-    # Location of EpubCheck Jar
-    epubcheckJar = os.path.expanduser(config.epubcheckJar)
-
-    # Java
-    if config.java == "":
-        java = "java"
-    else:
-        java = config.java
 
     # Output files
     outFile = prefixOut + ".csv"
@@ -120,32 +130,29 @@ def main():
 
     for epub in epubs:
         # Run Epubcheck
-        ecP, ecStatus, ecOut, ecErr = runEpubCheck(epub)
-        # Parse output
-        ecOutUTF8 = ecOut.encode('utf-8')
-        ecRoot = etree.fromstring(ecOutUTF8, parser=utf8_parser)
+        ecResults = validate(epub)
 
-        # EPUB version
-        epubVersions = ecRoot.xpath('//j:jhove/j:repInfo/j:version',
-                                   namespaces=NSMAP)
+        epubStatus = ecResults['valid']
+        epubMeta = ecResults['meta']
+        epubErrors = ecResults['errors']
+        epubWarnings = ecResults['warnings']
 
-        # Validation status
-        epubStatuses = ecRoot.xpath('//j:jhove/j:repInfo/j:status',
-                                   namespaces=NSMAP)
-
-        # Error codes
-        
-        epubErrors = ecRoot.xpath('//j:jhove/j:repInfo/j:messages/j:message[@severity="error"]/@id',
-                                   namespaces=NSMAP)
-
-        # Warning codes
-
-        epubWarnings = ecRoot.xpath('//j:jhove/j:repInfo/j:messages/j:message[@severity="warning"]/@id',
-                                   namespaces=NSMAP)
+        epubVersion = epubMeta['ePubVersion']
+        identifier = epubMeta['identifier']
+        title = epubMeta['title']
+        author = epubMeta['creator']
+        publisher = epubMeta['publisher']
 
         # Unique error and warning codes
-        epubErrorsUnique = list(set(epubErrors))
-        epubWarningsUnique = list(set(epubWarnings))
+        epubErrorsUnique = []
+        for epubError in epubErrors:
+            if epubError['id'] not in epubErrorsUnique:
+                epubErrorsUnique.append(epubError['id'])
+
+        epubWarningsUnique = []
+        for epubWarning in epubWarnings:
+            if epubWarning['id'] not in epubWarningsUnique:
+                epubWarningsUnique.append(epubWarning['id'])
 
         # Number of unique error and warning codes
         noErrors = len (epubErrorsUnique)
@@ -155,46 +162,6 @@ def main():
         errors = ' '.join(epubErrorsUnique)
         warnings = ' '.join(epubWarningsUnique)
 
-        # Extract identifier, title, author and publisher names
-        identifiers = ecRoot.xpath('//j:jhove/j:repInfo/j:properties/j:property[j:name="Info"]/j:values/j:property[j:name="Identifier"]/j:values/j:value',
-                                   namespaces=NSMAP)
-        titles = ecRoot.xpath('//j:jhove/j:repInfo/j:properties/j:property[j:name="Info"]/j:values/j:property[j:name="Title"]/j:values/j:value',
-                                   namespaces=NSMAP)
-        authors = ecRoot.xpath('//j:jhove/j:repInfo/j:properties/j:property[j:name="Info"]/j:values/j:property[j:name="Creator"]/j:values/j:value',
-                                   namespaces=NSMAP)
-        publishers = ecRoot.xpath('//j:jhove/j:repInfo/j:properties/j:property[j:name="Info"]/j:values/j:property[j:name="Publisher"]/j:values/j:value',
-                                   namespaces=NSMAP)
-
-        if len(epubVersions) != 0:
-            epubVersion = epubVersions[0].text
-        else:
-            epubVersion = ''
-
-        if len(epubStatuses) != 0:
-            epubStatus = epubStatuses[0].text
-        else:
-            epubStatus = ''
-
-        if len(identifiers) != 0:
-            identifier = identifiers[0].text
-        else:
-            identifier = ''
-
-        if len(titles) != 0:
-            title = titles[0].text
-        else:
-            title = ''
-
-        if len(authors) != 0:
-            author = authors[0].text
-        else:
-            author = ''
-
-        if len(publishers) != 0:
-            publisher = publishers[0].text
-        else:
-            publisher = ''
-
         # Extract text with Tika and count words
         parsed = parser.from_file(os.path.normpath(epub))
         extractedText = parsed["content"].strip()
@@ -203,12 +170,14 @@ def main():
         # Put all items that are to be written to a list and write row
         rowItems = [epub, identifier, title , author, publisher, epubVersion, epubStatus, noErrors, noWarnings, errors, warnings, noWords]
         csvOut.writerow(rowItems)
-
+        """
+        # TODO update this
         # Write full Epubcheck output for this file
         fECFull.write('****\n')
         fECFull.write(epub + '\n')
         fECFull.write(ecOut + '\n')
         fECFull.write(ecErr + '\n')
+        """
 
     # Close output file
     fOut.close()
