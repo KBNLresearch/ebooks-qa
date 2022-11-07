@@ -1,0 +1,3 @@
+fileName,identifier,title,author,publisher,epubVersion,epubStatus,noErrors,noWarnings,errors,warnings,wordCount
+./samples/Max_Havelaar_1.epub,mult001maxh01,Max Havelaar of de koffiveilingen der Nederlandsche Handelmaatschappy 1,['Multatuli'],dbnl,2.0.1,False,3,0,OPF-032 RSC-005 RSC-012,,125528
+./samples/Eva_1.epub,brug004eva_01,Eva 1,['Carry van Bruggen'],dbnl,2.0.1,False,5,2,OPF-031 OPF-032 RSC-005 RSC-008 RSC-012,OPF-003 OPF-055,68221

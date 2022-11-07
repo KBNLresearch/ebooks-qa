@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+    <meta charset="utf-8" />
+    <title>Report</title>
+    <link rel="stylesheet" type="text/css" href="./css/github-markdown.css">
+    <style>
+	    .markdown-body {
+		    box-sizing: border-box;
+		    min-width: 200px;
+		    max-width: 980px;
+		    margin: 0 auto;
+		    padding: 45px;
+	    }
+
+	    @media (max-width: 767px) {
+		    .markdown-body {
+			    padding: 15px;
+		    }
+	    }
+    </style>
+</head>
+<body>
+<span class="markdown-body">
+<h1>EPUB analysis report</h1>
+<p>Report generated: 2022-11-07 15:50:28</p>
+<p>Input file: ./example.csv</p>
+<h2>Summary</h2>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="right">Count</th>
+<th align="left">% of all EPUBs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">EPUBs</td>
+<td align="right">12</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">EPUBs with errors</td>
+<td align="right">7</td>
+<td align="left">58.33</td>
+</tr>
+<tr>
+<td align="left">EPUBs with warnings</td>
+<td align="right">2</td>
+<td align="left">16.67</td>
+</tr>
+<tr>
+<td align="left">EPUBs with errors or warnings</td>
+<td align="right">7</td>
+<td align="left">58.33</td>
+</tr>
+<tr>
+<td align="left">EPUBs with less than 1000 words</td>
+<td align="right">0</td>
+<td align="left">0.0</td>
+</tr>
+</tbody>
+</table>
+<h2>CSV subsets</h2>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">EPUBs with errors</td>
+<td align="left"><a href="./csv/errors.csv">errors.csv</a></td>
+</tr>
+<tr>
+<td align="left">EPUBs with warnings</td>
+<td align="left"><a href="./csv/warnings.csv">warnings.csv</a></td>
+</tr>
+<tr>
+<td align="left">EPUBs with errors or warnings</td>
+<td align="left"><a href="./csv/errorsorwarnings.csv">errorsorwarnings.csv</a></td>
+</tr>
+<tr>
+<td align="left">EPUBs with less than 1000 words</td>
+<td align="left"><a href="./csv/wordcountlt1000.csv">wordcountlt1000.csv</a></td>
+</tr>
+</tbody>
+</table>
+<h2>EPUB versions</h2>
+<table>
+<thead>
+<tr>
+<th align="left">epubVersion</th>
+<th align="right">Count</th>
+<th align="right">% of all EPUBs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">3.2</td>
+<td align="right">9</td>
+<td align="right">75</td>
+</tr>
+<tr>
+<td align="left">2.0.1</td>
+<td align="right">3</td>
+<td align="right">25</td>
+</tr>
+</tbody>
+</table>
+<h2>Frequency of validation errors</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Code</th>
+<th align="left">Description</th>
+<th align="right">Count</th>
+<th align="right">% of all EPUBs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">RSC-005</td>
+<td align="left">Error while parsing file: %1$s</td>
+<td align="right">5</td>
+<td align="right">41.67</td>
+</tr>
+<tr>
+<td align="left">NCX-001</td>
+<td align="left">NCX identifier ("%1$s") does not match OPF identifier ("%2$s").</td>
+<td align="right">2</td>
+<td align="right">16.67</td>
+</tr>
+<tr>
+<td align="left">OPF-032</td>
+<td align="left">Guide references "%1$s" which is not a valid "OPS Content Document".</td>
+<td align="right">2</td>
+<td align="right">16.67</td>
+</tr>
+<tr>
+<td align="left">RSC-012</td>
+<td align="left">Fragment identifier is not defined.</td>
+<td align="right">2</td>
+<td align="right">16.67</td>
+</tr>
+<tr>
+<td align="left">CSS-020</td>
+<td align="left">CSS font selector declaration uses unexpected font-size value "%1$s".</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">HTM-003</td>
+<td align="left">External entities are not allowed in EPUB v3 documents. External entity declaration found: %1$s.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">OPF-073</td>
+<td align="left">External identifiers must not appear in the document type declaration.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">RSC-007</td>
+<td align="left">Referenced resource "%1$s" could not be found in the EPUB.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">RSC-011</td>
+<td align="left">Found a reference to a resource that is not a spine item.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">RSC-016</td>
+<td align="left">Fatal Error while parsing file: %1$s</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">RSC-020</td>
+<td align="left">"%1$s" is not a valid URI.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">OPF-031</td>
+<td align="left">File listed in reference element in guide was not declared in OPF manifest: %1$s.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">RSC-008</td>
+<td align="left">Referenced resource "%1$s" is not declared in the OPF manifest.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">OPF-030</td>
+<td align="left">The unique-identifier "%1$s" was not found.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="" src="./img/errors.png"></p>
+<h2>CSV subsets for each error</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Code</th>
+<th align="left">File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">RSC-005</td>
+<td align="left"><a href="./csv/error-RSC-005.csv">error-RSC-005.csv</a></td>
+</tr>
+<tr>
+<td align="left">NCX-001</td>
+<td align="left"><a href="./csv/error-NCX-001.csv">error-NCX-001.csv</a></td>
+</tr>
+<tr>
+<td align="left">OPF-032</td>
+<td align="left"><a href="./csv/error-OPF-032.csv">error-OPF-032.csv</a></td>
+</tr>
+<tr>
+<td align="left">RSC-012</td>
+<td align="left"><a href="./csv/error-RSC-012.csv">error-RSC-012.csv</a></td>
+</tr>
+<tr>
+<td align="left">CSS-020</td>
+<td align="left"><a href="./csv/error-CSS-020.csv">error-CSS-020.csv</a></td>
+</tr>
+<tr>
+<td align="left">HTM-003</td>
+<td align="left"><a href="./csv/error-HTM-003.csv">error-HTM-003.csv</a></td>
+</tr>
+<tr>
+<td align="left">OPF-073</td>
+<td align="left"><a href="./csv/error-OPF-073.csv">error-OPF-073.csv</a></td>
+</tr>
+<tr>
+<td align="left">RSC-007</td>
+<td align="left"><a href="./csv/error-RSC-007.csv">error-RSC-007.csv</a></td>
+</tr>
+<tr>
+<td align="left">RSC-011</td>
+<td align="left"><a href="./csv/error-RSC-011.csv">error-RSC-011.csv</a></td>
+</tr>
+<tr>
+<td align="left">RSC-016</td>
+<td align="left"><a href="./csv/error-RSC-016.csv">error-RSC-016.csv</a></td>
+</tr>
+<tr>
+<td align="left">RSC-020</td>
+<td align="left"><a href="./csv/error-RSC-020.csv">error-RSC-020.csv</a></td>
+</tr>
+<tr>
+<td align="left">OPF-031</td>
+<td align="left"><a href="./csv/error-OPF-031.csv">error-OPF-031.csv</a></td>
+</tr>
+<tr>
+<td align="left">RSC-008</td>
+<td align="left"><a href="./csv/error-RSC-008.csv">error-RSC-008.csv</a></td>
+</tr>
+<tr>
+<td align="left">OPF-030</td>
+<td align="left"><a href="./csv/error-OPF-030.csv">error-OPF-030.csv</a></td>
+</tr>
+</tbody>
+</table>
+<h2>Frequency of validation warnings</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Code</th>
+<th align="left">Description</th>
+<th align="right">Count</th>
+<th align="right">% of all EPUBs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">PKG-010</td>
+<td align="left">Filename contains spaces, therefore URI escaping is necessary. Consider removing spaces from filename.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">OPF-003</td>
+<td align="left">Item "%1$s" exists in the EPUB, but is not declared in the OPF manifest.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+<tr>
+<td align="left">OPF-055</td>
+<td align="left">%1$s tag is empty.</td>
+<td align="right">1</td>
+<td align="right">8.33</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="" src="./img/warnings.png"></p>
+<h2>CSV subsets for each warning</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Code</th>
+<th align="left">File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">PKG-010</td>
+<td align="left"><a href="./csv/warning-PKG-010.csv">warning-PKG-010.csv</a></td>
+</tr>
+<tr>
+<td align="left">OPF-003</td>
+<td align="left"><a href="./csv/warning-OPF-003.csv">warning-OPF-003.csv</a></td>
+</tr>
+<tr>
+<td align="left">OPF-055</td>
+<td align="left"><a href="./csv/warning-OPF-055.csv">warning-OPF-055.csv</a></td>
+</tr>
+</tbody>
+</table>
+<h2>Detailed statistics</h2>
+<h3>All EPUBs</h3>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="right">noErrors</th>
+<th align="right">noWarnings</th>
+<th align="right">wordCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">count</td>
+<td align="right">12</td>
+<td align="right">12</td>
+<td align="right">12</td>
+</tr>
+<tr>
+<td align="left">mean</td>
+<td align="right">1.75</td>
+<td align="right">0.25</td>
+<td align="right">77252.8</td>
+</tr>
+<tr>
+<td align="left">std</td>
+<td align="right">2.49089</td>
+<td align="right">0.621582</td>
+<td align="right">76391.1</td>
+</tr>
+<tr>
+<td align="left">min</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2779</td>
+</tr>
+<tr>
+<td align="left">25%</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">27156</td>
+</tr>
+<tr>
+<td align="left">50%</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">31108</td>
+</tr>
+<tr>
+<td align="left">75%</td>
+<td align="right">2.25</td>
+<td align="right">0</td>
+<td align="right">125338</td>
+</tr>
+<tr>
+<td align="left">max</td>
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">218333</td>
+</tr>
+</tbody>
+</table>
+<h3>EPUBs with errors</h3>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="right">noErrors</th>
+<th align="right">noWarnings</th>
+<th align="right">wordCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">count</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">7</td>
+</tr>
+<tr>
+<td align="left">mean</td>
+<td align="right">3</td>
+<td align="right">0.428571</td>
+<td align="right">74671.7</td>
+</tr>
+<tr>
+<td align="left">std</td>
+<td align="right">2.64575</td>
+<td align="right">0.786796</td>
+<td align="right">73166.6</td>
+</tr>
+<tr>
+<td align="left">min</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">25949</td>
+</tr>
+<tr>
+<td align="left">25%</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">27116</td>
+</tr>
+<tr>
+<td align="left">50%</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">30439</td>
+</tr>
+<tr>
+<td align="left">75%</td>
+<td align="right">4</td>
+<td align="right">0.5</td>
+<td align="right">96874.5</td>
+</tr>
+<tr>
+<td align="left">max</td>
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">218333</td>
+</tr>
+</tbody>
+</table>
+<h3>EPUBs with warnings</h3>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="right">noErrors</th>
+<th align="right">noWarnings</th>
+<th align="right">wordCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">count</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td align="left">mean</td>
+<td align="right">6.5</td>
+<td align="right">1.5</td>
+<td align="right">49330</td>
+</tr>
+<tr>
+<td align="left">std</td>
+<td align="right">2.12132</td>
+<td align="right">0.707107</td>
+<td align="right">26715.9</td>
+</tr>
+<tr>
+<td align="left">min</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">30439</td>
+</tr>
+<tr>
+<td align="left">25%</td>
+<td align="right">5.75</td>
+<td align="right">1.25</td>
+<td align="right">39884.5</td>
+</tr>
+<tr>
+<td align="left">50%</td>
+<td align="right">6.5</td>
+<td align="right">1.5</td>
+<td align="right">49330</td>
+</tr>
+<tr>
+<td align="left">75%</td>
+<td align="right">7.25</td>
+<td align="right">1.75</td>
+<td align="right">58775.5</td>
+</tr>
+<tr>
+<td align="left">max</td>
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">68221</td>
+</tr>
+</tbody>
+</table>
+<h3>EPUBs with errors or warnings</h3>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="right">noErrors</th>
+<th align="right">noWarnings</th>
+<th align="right">wordCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">count</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">7</td>
+</tr>
+<tr>
+<td align="left">mean</td>
+<td align="right">3</td>
+<td align="right">0.428571</td>
+<td align="right">74671.7</td>
+</tr>
+<tr>
+<td align="left">std</td>
+<td align="right">2.64575</td>
+<td align="right">0.786796</td>
+<td align="right">73166.6</td>
+</tr>
+<tr>
+<td align="left">min</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">25949</td>
+</tr>
+<tr>
+<td align="left">25%</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">27116</td>
+</tr>
+<tr>
+<td align="left">50%</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">30439</td>
+</tr>
+<tr>
+<td align="left">75%</td>
+<td align="right">4</td>
+<td align="right">0.5</td>
+<td align="right">96874.5</td>
+</tr>
+<tr>
+<td align="left">max</td>
+<td align="right">8</td>
+<td align="right">2</td>
+<td align="right">218333</td>
+</tr>
+</tbody>
+</table>
+<h3>EPUBs with less than 1000 words</h3>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="right">noErrors</th>
+<th align="right">noWarnings</th>
+<th align="right">wordCount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">count</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td align="left">mean</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+</tr>
+<tr>
+<td align="left">std</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+</tr>
+<tr>
+<td align="left">min</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+</tr>
+<tr>
+<td align="left">25%</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+</tr>
+<tr>
+<td align="left">50%</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+</tr>
+<tr>
+<td align="left">75%</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+</tr>
+<tr>
+<td align="left">max</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+<td align="right">nan</td>
+</tr>
+</tbody>
+</table>
+</span>
+</body>
+</html>

@@ -1,0 +1,2 @@
+fileName,identifier,title,author,publisher,epubVersion,epubStatus,noErrors,noWarnings,errors,warnings,wordCount
+./samples/Eva_1.epub,brug004eva_01,Eva 1,['Carry van Bruggen'],dbnl,2.0.1,False,5,2,OPF-031 OPF-032 RSC-005 RSC-008 RSC-012,OPF-003 OPF-055,68221

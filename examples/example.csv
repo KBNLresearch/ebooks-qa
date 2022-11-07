@@ -1,0 +1,13 @@
+fileName,identifier,title,author,publisher,epubVersion,epubStatus,noErrors,noWarnings,errors,warnings,wordCount
+./samples/Testbook_Formaat.epub,urn:uuid:33011D53-E2BB-4885-B7EB-72E99AEED70B,Test book epub3,['Ferdinand Rusch'],Formaat,3.2,True,0,0,,,2779
+./samples/Alice's_Adventures_in_Wonderland_1.epub,7e824858-f120-11eb-9a03-0242ac130003,Alice's Adventures in Wonderland 1,['Lewis Carroll'],Wikisource,3.2,False,1,0,NCX-001,,27036
+./samples/Open_a_GLAM_Lab_2.epub,61572367834730,Open a GLAM Lab 2,[],,3.2,True,0,0,,,31777
+./samples/Max_Havelaar_1.epub,mult001maxh01,Max Havelaar of de koffiveilingen der Nederlandsche Handelmaatschappy 1,['Multatuli'],dbnl,2.0.1,False,3,0,OPF-032 RSC-005 RSC-012,,125528
+./samples/Lotgevallen_van_Ferdinand_Huyck_2.epub,e6ae2224-f09b-11eb-9a03-0242ac130003,De lotgevallen van Ferdinand Huyck 2,['Jacob van Lennep'],dbnl / KB / Newgen Knowledgeworks,3.2,False,1,0,NCX-001,,218333
+./samples/Lotgevallen_van_Ferdinand_Huyck_1.epub,lenn006lotg01,De lotgevallen van Ferdinand Huyck 1,['Jacob van Lennep'],dbnl,2.0.1,True,0,0,,,217263
+./samples/Open_a_GLAM_Lab_1.epub,urn:uuid:b1818c01-4aab-42ae-b9c8-2c21457156c8,Open a GLAM Lab 1,['International GLAM Labs Community'],Glamlabs.io,3.2,False,8,1,CSS-020 HTM-003 OPF-073 RSC-005 RSC-007 RSC-011 RSC-016 RSC-020,PKG-010,30439
+./samples/Eva_1.epub,brug004eva_01,Eva 1,['Carry van Bruggen'],dbnl,2.0.1,False,5,2,OPF-031 OPF-032 RSC-005 RSC-008 RSC-012,OPF-003 OPF-055,68221
+./samples/Alice_in_Wonderland_4.epub,urn:uuid:d692392c-3eaa-4b7c-a045-c6d6d51307b2,Alice’s Adventures in Wonderland,['Lewis Caroll'],KB National Library of the Netherlands,3.2,False,1,0,RSC-005,,25949
+./samples/Max_Havelaar_A.epub,urn:uuid:C8C09083-B435-4498-8C4F-F2AF8CBC4106,Max Havelaar 2,['Multatuli'],"KB, DBNL",3.2,True,0,0,,,125275
+./samples/Alice's_Adventures_in_Wonderland_2.epub,urn:uuid:650E8F77-B80F-4C8E-BAEC-D985FE0581A0,Alice's Adventures in Wonderland 2,"['Lewis Carroll, John Tenniel']",Wikisource / KB / Formaat,3.2,True,0,0,,,27238
+./samples/Alice's_Adventures_in_Wonderland_3.epub,,Alice's Adventures in Wonderland 3,"['Lewis Carroll, John Tenniel']",Wikisource / KB / Newgen Knowledgeworks,3.2,False,2,0,OPF-030 RSC-005,,27196

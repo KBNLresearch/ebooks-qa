@@ -1,0 +1,3 @@
+fileName,identifier,title,author,publisher,epubVersion,epubStatus,noErrors,noWarnings,errors,warnings,wordCount
+./samples/Open_a_GLAM_Lab_1.epub,urn:uuid:b1818c01-4aab-42ae-b9c8-2c21457156c8,Open a GLAM Lab 1,['International GLAM Labs Community'],Glamlabs.io,3.2,False,8,1,CSS-020 HTM-003 OPF-073 RSC-005 RSC-007 RSC-011 RSC-016 RSC-020,PKG-010,30439
+./samples/Eva_1.epub,brug004eva_01,Eva 1,['Carry van Bruggen'],dbnl,2.0.1,False,5,2,OPF-031 OPF-032 RSC-005 RSC-008 RSC-012,OPF-003 OPF-055,68221
