@@ -104,12 +104,6 @@ def main():
     headerItems = ['fileName', 'identifier', 'title' ,'author', 'publisher', 'epubVersion', 'epubStatus', 'noErrors', 'noWarnings', 'errors', 'warnings', 'wordCount']
     csvOut.writerow(headerItems)
 
-    # Configure XML parser
-    utf8_parser = etree.XMLParser(encoding='utf-8', remove_blank_text=True)
-
-    # Namespaces
-    NSMAP = {'j': 'http://schema.openpreservation.org/ois/xml/ns/jhove'}
-
     # Set up list that will contain all EPUBs
     epubs= []
 
