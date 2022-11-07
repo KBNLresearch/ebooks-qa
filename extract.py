@@ -78,9 +78,6 @@ def validate(epub):
 
 def main():
 
-    global epubcheckJar
-    global java
-
     if len(sys.argv) < 3:
         sys.stderr.write("USAGE: extract.py <rootDir> <prefixOut>\n")
         sys.exit()
